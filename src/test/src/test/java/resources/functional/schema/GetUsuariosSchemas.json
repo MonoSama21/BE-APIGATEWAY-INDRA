@@ -1,0 +1,64 @@
+{
+  "200": {
+    "quantidade": "#number",
+    "usuarios": "#array"
+  },
+  "200_usuario": {
+    "nome": "#string",
+    "email": "#string",
+    "password": "#string",
+    "administrador": "#string",
+    "_id": "#string"
+  },
+  "200_usuario_by_id": {
+    "nome": "#string",
+    "email": "#string",
+    "password": "#string",
+    "administrador": "#string",
+    "_id": "#string"
+  },
+  "200_delete": {
+    "message": "#string"
+  },
+  "200_delete_sucesso": {
+    "message": "Registro excluído com sucesso"
+  },
+  "200_delete_nenhum": {
+    "message": "Nenhum registro excluído"
+  },
+  "200_put": {
+    "message": "#string"
+  },
+  "200_put_alterado": {
+    "message": "Registro alterado com sucesso"
+  },
+  "201_put": {
+    "message": "#string",
+    "_id": "#string"
+  },
+  "201_put_cadastro": {
+    "message": "Cadastro realizado com sucesso",
+    "_id": "#string"
+  },
+  "400": {
+    "message": "#string"
+  },
+  "400_usuario_nao_encontrado": {
+    "id": "#string"
+  },
+  "400_usuario_com_carrinho": {
+    "message": "#string",
+    "idCarrinho": "#string"
+  },
+  "400_email_duplicado": {
+    "message": "Este email já está sendo usado"
+  },
+  "401": {
+    "message": "#string",
+    "error": "#string"
+  },
+  "404": {
+    "message": "#string",
+    "error": "#string"
+  }
+}

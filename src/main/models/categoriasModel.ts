@@ -11,7 +11,7 @@ export class Categoria extends BaseEntity {
     nombre: String;
 
     @Column()
-    description: String;
+    descripcion: String;
     
     @Column()
     posicion: String;

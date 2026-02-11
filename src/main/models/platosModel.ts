@@ -11,7 +11,7 @@ export class Plato extends BaseEntity {
     categoriaId: number;
 
     @Column()
-    name: String;
+    nombre: String;
 
     @Column()
     descripcion: String;

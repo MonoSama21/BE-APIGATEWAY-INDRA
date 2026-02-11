@@ -1,0 +1,15 @@
+{
+  "201": {
+    "message": "#string",
+    "_id": "#string"
+  },
+  "400": {
+    "message": "#string"
+  },
+  "400_email_duplicado": {
+    "message": "Este email já está sendo usado"
+  },
+  "400_campos_faltantes": {
+    "message": "#string"
+  }
+}
