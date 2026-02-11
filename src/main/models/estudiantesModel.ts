@@ -26,6 +26,4 @@ export class Estudiante extends BaseEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
-
-
 }
