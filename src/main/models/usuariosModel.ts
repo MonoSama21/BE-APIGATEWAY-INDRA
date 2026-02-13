@@ -1,18 +1,18 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, Exclusion, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ unique: true })
     nombre: string;
 
-    @Column()
-    correo: string;
+    @Column({ unique: true })
+    email: string;
 
     @Column()
-    contraseña: string;
+    password: string;
 
     @Column()
     rol: string;

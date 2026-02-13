@@ -9,6 +9,7 @@ import configuracionRoutes from './routes/configuracionRoutes';
 import categoriasRoutes from './routes/categoriasRoutes';
 import platosRoutes from './routes/platosRoutes';
 
+
 const app = express();
 
 app.use(express.json()); // Para parsear JSON en el body

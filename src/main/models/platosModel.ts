@@ -35,7 +35,9 @@ export class Plato extends BaseEntity {
 
 
     // UN PLATO PERTENECE A UNA CATEGORIA
-    @ManyToOne(() => Categoria, categoria => categoria.platos)
+    @ManyToOne(() => Categoria, categoria => categoria.platos, {
+        onDelete: 'CASCADE' //ESTO HACE QUE SI SE ELIMINA UNA CATEGORIA, SE ELIMINEN TODOS LOS PLATOS QUE PERTENECEN A ESA CATEGORIA
+    })
     categoria: Categoria;
 
 }

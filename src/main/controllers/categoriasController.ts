@@ -74,7 +74,7 @@ class CategoriaController {
             res.status(200).send({ message: `Categoria con ID ${id} eliminada correctamente` });
         } catch (err) {
             if (err instanceof Error) 
-                res.status(500).send(err.message);
+                res.status(500).send({ message: err.message });
         }
     }
 

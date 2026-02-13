@@ -1,6 +1,9 @@
 import app from "./app";
 import { AppDataSource } from "./db/conexion";    
 
+
+
+
 async function main() {
     try {
         await AppDataSource.initialize();

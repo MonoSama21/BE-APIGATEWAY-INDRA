@@ -67,7 +67,7 @@ class PlatoController {
                 throw new Error('Plato no encontrado');
             }
             await Plato.delete({ id: Number(id) });
-            res.sendStatus(204);
+            res.status(200).send({ message: `Plato con ID ${id} eliminado correctamente` });
         } catch (err) {
             if (err instanceof Error) 
                 res.status(500).send(err.message);
