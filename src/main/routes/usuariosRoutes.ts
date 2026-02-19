@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 router.get('/',  verificarToken, usuariosController.consultar);
-router.post('/', verificarToken, usuariosController.ingresar);
+router.post('/', usuariosController.ingresar);
 
 router.post('/login', usuariosController.login);
 

@@ -18,7 +18,7 @@ export class Usuario extends BaseEntity {
     rol: string;
 
     @Column({
-        type: 'tinyint',
+        type: 'boolean',
         width: 1,
         transformer: {
             to: (value: boolean | number) => value ? 1 : 0,
@@ -28,9 +28,9 @@ export class Usuario extends BaseEntity {
     activo: boolean;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdat: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedat: Date;
 
 }
