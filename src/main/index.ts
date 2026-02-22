@@ -1,38 +1,27 @@
 import app from "./app";
-import { AppDataSource } from "./db/conexion";
+import { AppDataSource } from './db/conexion';
+import dotenv from 'dotenv';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 
-// Inicializar la base de datos solo una vez
-let dataSourceInitialized = false;
+dotenv.config();
 
-async function initializeDataSource() {
-    if (!dataSourceInitialized) {
-        try {
-            await AppDataSource.initialize();
-            dataSourceInitialized = true;
-            console.log("Base de datos conectada");
-        } catch (err) {
-            if (err instanceof Error) {
-                console.log(err.message);
-            }
-        }
-    }
-}
+const PORT = process.env.PORT || 6500;
 
-// Para Vercel: inicializar la base de datos antes de manejar cualquier request
-app.use(async (req, res, next) => {
-    await initializeDataSource();
-    next();
-});
+// Middlewares
+app.use(cors()); // Permitir peticiones desde cualquier origen
+app.use(bodyParser.json()); // Parsear JSON en el body
+app.use(bodyParser.urlencoded({ extended: true })); // Parsear datos de formularios
 
-// No usar app.listen en Vercel
-// export default app para serverless
-export default app;
-
-// Si corres localmente, sí puedes usar app.listen
-if (process.env.NODE_ENV !== 'production' && require.main === module) {
-    initializeDataSource().then(() => {
-        app.listen(6505, () => {
-            console.log("Server activo en puerto 6505");
+// Inicializar TypeORM y arrancar el servidor solo si la conexión es exitosa
+AppDataSource.initialize()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Servidor corriendo en el puerto ${PORT}`);
         });
+    })
+    .catch((error) => {
+        console.error('Error al conectar con la base de datos:', error);
     });
-}
+
+export default app;
