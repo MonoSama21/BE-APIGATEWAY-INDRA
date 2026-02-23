@@ -1,6 +1,6 @@
 import express from 'express';
 import categoriasController from '../controllers/categoriasController';
-import { verificarToken } from '../helpers/auth';
+import { verificarToken } from '../middlewares/authMiddleware';
 const router = express.Router();
 
 

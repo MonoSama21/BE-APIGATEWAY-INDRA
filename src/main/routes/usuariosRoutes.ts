@@ -1,6 +1,6 @@
 import express from 'express';
 import usuariosController from '../controllers/usuariosController';
-import { verificarToken } from '../helpers/auth';
+import { verificarToken } from '../middlewares/authMiddleware';
 const router = express.Router();
 
 

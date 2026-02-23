@@ -6,6 +6,8 @@ import configuracionRoutes from './routes/configuracionRoutes';
 import categoriasRoutes from './routes/categoriasRoutes';
 import platosRoutes from './routes/platosRoutes';
 import noviosRoutes from './routes/noviosRoutes';
+import citasRoutes from './routes/citasRoutes';
+import registroCitaRoutes from './routes/registroCitaRoutes';
 
 const app = express();
 
@@ -30,5 +32,7 @@ app.use('/configuracion', configuracionRoutes);
 app.use('/categorias', categoriasRoutes);
 app.use('/platos', platosRoutes);
 app.use('/novios', noviosRoutes);
+app.use('/citas', citasRoutes);
+app.use('/registros-citas', registroCitaRoutes);
 
 export default app;

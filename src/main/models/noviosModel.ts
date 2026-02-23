@@ -1,5 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
-
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { RegistroCita } from "./registrosCitasModel";
 
 @Entity('Novios') //NOMBRE DE LA TABLA EN LA BASE DE DATOS
 export class Novio extends BaseEntity {
@@ -8,22 +8,24 @@ export class Novio extends BaseEntity {
     id: number;
 
     @Column()
-    nombre: String;
+    nombre: string;
 
     @Column()
-    email: String;
+    email: string;
 
     @Column()
-    telefono: String;
+    telefono: string;
 
     @Column()
-    password: String;
+    password: string;
 
     @CreateDateColumn()
     createdat: Date;
-
     
     @CreateDateColumn()
     updatedat: Date;
 
+    @OneToMany(() => RegistroCita, registro => registro.novio)
+    registrosCitas: RegistroCita[];
+    
 }
