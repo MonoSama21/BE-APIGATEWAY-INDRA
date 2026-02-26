@@ -1,3 +1,4 @@
+
 //import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
 import { Novio } from '../models/noviosModel';
@@ -11,7 +12,7 @@ const SCHEMA = process.env.SUPABASE_SCHEMA || 'produccion'; // prod o desa
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
-    host: 'db.cqubhoavxbouyvvfrxcx.supabase.co',
+    host: process.env.SUPABASE_HOST || '',
     port: Number(process.env.SUPABASE_PORT) || 5432,
     username: 'postgres',
     password: '123zeusyrayo',
@@ -21,3 +22,8 @@ export const AppDataSource = new DataSource({
     logging: true,
     synchronize: false
 });
+
+console.log('SUPABASE_HOST:', process.env.SUPABASE_HOST);
+console.log('SUPABASE_PORT:', process.env.SUPABASE_PORT);
+console.log('SUPABASE_DB:', process.env.SUPABASE_DB);
+console.log('SUPABASE_SCHEMA:', process.env.SUPABASE_SCHEMA);
