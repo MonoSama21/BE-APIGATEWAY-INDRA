@@ -3,12 +3,16 @@ import { RegistroCita } from "../models/registrosCitasModel";
 import { Novio } from "../models/noviosModel";
 import { Cita } from "../models/citasModel";
 import { FotoCita } from "../models/fotosCitaModel";
+import { AppDataSource } from '../db/conexion';
 
 
 class RegistrosCitasController {
     // PATCH: Actualizar registro de cita
     async actualizarRegistro(req: Request, res: Response) {
         try {
+            if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+            }
             const registroId = req.params.id;
             const { citaId, comentario } = req.body;
             const fotosCloudinary = (req as any).fotosCloudinary; // opcional, puede venir de un middleware
@@ -101,6 +105,9 @@ class RegistrosCitasController {
 
     async ingresarRegistro(req: Request, res: Response) {
         try {
+            if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+            }
             // Obtener el id del usuario autenticado (del token)
             const usuarioId = (req as any).usuario?.id || req.body.novioId;
             const { citaId, comentario } = req.body;
@@ -168,6 +175,9 @@ class RegistrosCitasController {
 
     async consultarRegistros(req: Request, res: Response) {
         try {
+            if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+            }
             // Obtener page y limit de los query params, con valores por defecto
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;

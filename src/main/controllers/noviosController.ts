@@ -13,7 +13,9 @@ class NoviosController {
     }
 
     async consultar(req: Request, res: Response) {
-
+        if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+        }
         const data = await Novio.find({
             select: ['id', 'nombre', 'email', 'telefono']
         });
@@ -38,6 +40,9 @@ class NoviosController {
 
         const { id } = req.params;
         try {
+            if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+            }
             const novio = await Novio.findOneBy({ id: Number(id) });
             if (!novio) {
                 return res.status(404).json({
@@ -117,6 +122,9 @@ class NoviosController {
     async login(req: Request, res: Response){
 
         try {
+            if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+            }
             const { email, password } = req.body;
 
             const usuarioExiste = await Novio.findOne({ where: { email } });
@@ -155,6 +163,9 @@ class NoviosController {
     async cambiarPassword(req: Request, res: Response) {
 
         try {
+            if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+            }
             const { passwordActual, passwordNueva } = req.body;
             const email = (req as any).usuario.email; // El middleware debe poner el email en req.usuario
 
