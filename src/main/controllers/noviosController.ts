@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Novio } from '../models/noviosModel';
 import bcrypt from 'bcrypt';
 import { generarToken } from '../helpers/auth';
-
+import { AppDataSource } from '../db/conexion';
 
 
 
@@ -62,6 +62,9 @@ class NoviosController {
     async ingresar(req: Request, res: Response){
  
         try {
+            if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+            }
             const campos = ['nombre', 'email', 'telefono', 'password'];
             const faltantes = campos.filter(campo => !req.body[campo]);
             //VALIDACION DE CAMPOS FALTANTES

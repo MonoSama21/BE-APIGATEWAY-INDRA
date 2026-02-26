@@ -1,5 +1,3 @@
-
-
 import app from "./app";
 import { AppDataSource } from './db/conexion';
 import dotenv from 'dotenv';
@@ -7,14 +5,6 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 
 dotenv.config();
-// Middleware global para inicializar el DataSource en cada request (Vercel/serverless)
-app.use(async (req, res, next) => {
-    const { AppDataSource } = require('./db/conexion');
-    if (!AppDataSource.isInitialized) {
-        await AppDataSource.initialize();
-    }
-    next();
-});
 
 const PORT = process.env.PORT || 6500;
 
