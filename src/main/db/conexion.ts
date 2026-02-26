@@ -11,10 +11,10 @@ const SCHEMA = process.env.SUPABASE_SCHEMA || 'produccion'; // prod o desa
 
 export const AppDataSource = new DataSource({
     type: 'postgres',
-    host: process.env.SUPABASE_HOST || '',
+    host: 'db.cqubhoavxbouyvvfrxcx.supabase.co',
     port: Number(process.env.SUPABASE_PORT) || 5432,
-    username: process.env.SUPABASE_USER || 'postgres',
-    password: process.env.SUPABASE_PASSWORD || '123zeusyrayo',
+    username: 'postgres',
+    password: '123zeusyrayo',
     database: process.env.SUPABASE_DB || 'postgres',
     schema: SCHEMA,
     entities: [Novio, Cita, RegistroCita, FotoCita],
