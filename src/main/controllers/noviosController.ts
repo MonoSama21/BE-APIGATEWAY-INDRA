@@ -2,6 +2,10 @@ import { Request, Response } from 'express';
 import { Novio } from '../models/noviosModel';
 import bcrypt from 'bcrypt';
 import { generarToken } from '../helpers/auth';
+import { AppDataSource } from '../db/conexion';
+
+
+
 
 class NoviosController {
 
@@ -10,6 +14,9 @@ class NoviosController {
     }
 
     async consultar(req: Request, res: Response) {
+        if (!AppDataSource.isInitialized) {
+            await AppDataSource.initialize();
+        }
         const data = await Novio.find({
             select: ['id', 'nombre', 'email', 'telefono']
         });
@@ -31,6 +38,9 @@ class NoviosController {
     }
 
     async consultarDetalle(req: Request, res: Response) {
+        if (!AppDataSource.isInitialized) {
+            await AppDataSource.initialize();
+        }
         const { id } = req.params;
         try {
             const novio = await Novio.findOneBy({ id: Number(id) });
@@ -55,6 +65,9 @@ class NoviosController {
     }
 
     async ingresar(req: Request, res: Response){
+        if (!AppDataSource.isInitialized) {
+            await AppDataSource.initialize();
+        }
         try {
             const campos = ['nombre', 'email', 'telefono', 'password'];
             const faltantes = campos.filter(campo => !req.body[campo]);
@@ -106,6 +119,9 @@ class NoviosController {
     }
 
     async login(req: Request, res: Response){
+        if (!AppDataSource.isInitialized) {
+            await AppDataSource.initialize();
+        }
         try {
             const { email, password } = req.body;
 
@@ -143,6 +159,9 @@ class NoviosController {
     }
 
     async cambiarPassword(req: Request, res: Response) {
+        if (!AppDataSource.isInitialized) {
+            await AppDataSource.initialize();
+        }
         try {
             const { passwordActual, passwordNueva } = req.body;
             const email = (req as any).usuario.email; // El middleware debe poner el email en req.usuario
