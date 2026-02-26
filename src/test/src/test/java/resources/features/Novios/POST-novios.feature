@@ -1,10 +1,27 @@
-Feature: Crear novios
+Feature: POST /novios - Registrar un nuevo usuario (novio)
 
-Scenario: Crear un nuevo novio
-  Given url 'http://localhost:6500/novios'
-  And request 
+Background:
+  * url urlBase
+  * path "/novios"
+  * call read('classpath:resources/utils/javafaker.js')
+  * def data = GenerandoDataAleatoria()
+  * def nombre = data.nombreRandom
+  * def email = data.emailRandom
+  * def telefono = data.telefonoRandom
+  * print 'Nombre generado:', nombre
+  * print 'Email generado:', email
+  * print 'Telefono generado:', telefono
+
+
+@prueba2
+Scenario: Validar que se puede crear un nuevo usuario (novio)
+  And request
   """
-  { "nombre": "Juan", "apellido": "Perez", "email": "juan.perez@example.com" }
-    """
-    When method post
-    Then status 201
+  {
+    "nombre": "#(nombre)",
+    "email": "#(email)",
+    "telefono": "#(telefono)"
+  }
+  """
+  When method POST
+  Then status 201

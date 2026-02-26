@@ -1,11 +1,11 @@
 function fn() {
-  var env = karate.env || 'QA';
+  var env = karate.env || 'DEV';
   karate.log('Ejecución de pruebas en ambiente de:', env);
 
   var ENV = {
     DEV: {
       api: {
-        urlBase: "https://serverest.dev/"
+        urlBase: "https://qadev-be-novios100-citas.vercel.app"
       }
     },
     QA: {
