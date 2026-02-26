@@ -1,4 +1,7 @@
-
+console.log('SUPABASE_HOST:', process.env.SUPABASE_HOST);
+console.log('SUPABASE_PORT:', process.env.SUPABASE_PORT);
+console.log('SUPABASE_DB:', process.env.SUPABASE_DB);
+console.log('SUPABASE_SCHEMA:', process.env.SUPABASE_SCHEMA);
 //import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
 import { Novio } from '../models/noviosModel';
@@ -23,7 +26,3 @@ export const AppDataSource = new DataSource({
     synchronize: false
 });
 
-console.log('SUPABASE_HOST:', process.env.SUPABASE_HOST);
-console.log('SUPABASE_PORT:', process.env.SUPABASE_PORT);
-console.log('SUPABASE_DB:', process.env.SUPABASE_DB);
-console.log('SUPABASE_SCHEMA:', process.env.SUPABASE_SCHEMA);
