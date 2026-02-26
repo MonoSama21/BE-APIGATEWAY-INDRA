@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, JoinColumn } from "typeorm";
 import { RegistroCita } from "./registrosCitasModel";
 
 @Entity('fotos_cita')
@@ -7,6 +7,7 @@ export class FotoCita extends BaseEntity {
     id: number;
 
     @ManyToOne(() => RegistroCita, registro => registro.fotos, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'registroid' })
     registro: RegistroCita;
 
     @Column({ length: 255 })

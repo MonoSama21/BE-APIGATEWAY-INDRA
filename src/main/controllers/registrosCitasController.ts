@@ -13,19 +13,19 @@ class RegistrosCitasController {
             if (!AppDataSource.isInitialized) {
                 await AppDataSource.initialize();
             }
-            const registroId = req.params.id;
-            const { citaId, comentario } = req.body;
+            const registroid = req.params.id;
+            const { citaid, comentario } = req.body;
             const fotosCloudinary = (req as any).fotosCloudinary; // opcional, puede venir de un middleware
 
             // Buscar el registro existente
-            const registro = await RegistroCita.findOne({ where: { id: Number(registroId) }, relations: ["cita", "fotos"] });
+            const registro = await RegistroCita.findOne({ where: { id: Number(registroid) }, relations: ["cita", "fotos"] });
             if (!registro) {
                 return res.status(404).json({ success: false, message: "Registro no encontrado" });
             }
 
             // Si se envía citaId, actualizar la cita
-            if (citaId) {
-                const cita = await Cita.findOneBy({ id: citaId });
+            if (citaid) {
+                const cita = await Cita.findOneBy({ id: citaid });
                 if (!cita) {
                     return res.status(400).json({ success: false, message: "Cita no encontrada" });
                 }
@@ -86,7 +86,7 @@ class RegistrosCitasController {
                 comentario: registro.comentario,
                 fotos: urls,
                 id: registro.id,
-                fechaRealizada: registro.fechaRealizada
+                fechaRealizada: registro.fecharealizada
             };
 
             res.status(200).json({
@@ -109,21 +109,21 @@ class RegistrosCitasController {
                 await AppDataSource.initialize();
             }
             // Obtener el id del usuario autenticado (del token)
-            const usuarioId = (req as any).usuario?.id || req.body.novioId;
-            const { citaId, comentario } = req.body;
+            const usuarioId = (req as any).usuario?.id || req.body.novioid;
+            const { citaid, comentario } = req.body;
             const fotosCloudinary = (req as any).fotosCloudinary;
             
 
             // Validar existencia de usuario y cita
 
             const novio = await Novio.findOneBy({ id: usuarioId });
-            const cita = await Cita.findOneBy({ id: citaId });
+            const cita = await Cita.findOneBy({ id: citaid });
             if (!novio || !cita) {
                 return res.status(400).json({ success: false, message: "Usuario o cita no encontrada" });
             }
 
             // Validar que no exista ya un registro para ese usuario y cita
-            const existe = await RegistroCita.findOne({ where: { cita: { id: citaId }, novio: { id: usuarioId } } });
+            const existe = await RegistroCita.findOne({ where: { cita: { id: citaid }, novio: { id: usuarioId } } });
             if (existe) {
                 return res.status(400).json({ success: false, message: "Ya registraste esta cita" });
             }
@@ -158,7 +158,7 @@ class RegistrosCitasController {
                 comentario: registro.comentario,
                 fotos: urls,
                 id: registro.id,
-                fechaRealizada: registro.fechaRealizada
+                fechaRealizada: registro.fecharealizada
             };
 
             res.status(201).json({
