@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Cita } from '../models/citasModel';
-
+import { AppDataSource } from '../db/conexion';
 class CitaController {
 
     constructor(){
@@ -9,6 +9,9 @@ class CitaController {
 
     async consultar(req: Request, res: Response) {  
         try {
+            if (!AppDataSource.isInitialized) {
+                await AppDataSource.initialize();
+            }
             // Obtener page y limit de los query params, con valores por defecto
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
