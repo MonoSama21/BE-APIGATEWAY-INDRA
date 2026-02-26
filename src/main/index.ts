@@ -6,13 +6,8 @@ import cors from 'cors';
 
 dotenv.config();
 
+
 const PORT = process.env.PORT || 6500;
-
-// Middlewares
-app.use(cors()); // Permitir peticiones desde cualquier origen
-app.use(bodyParser.json()); // Parsear JSON en el body
-app.use(bodyParser.urlencoded({ extended: true })); // Parsear datos de formularios
-
 // Inicializar TypeORM y arrancar el servidor solo si la conexión es exitosa
 AppDataSource.initialize()
     .then(() => {
@@ -23,5 +18,13 @@ AppDataSource.initialize()
     .catch((error) => {
         console.error('Error al conectar con la base de datos:', error);
     });
+
+    
+// Middlewares
+app.use(cors()); // Permitir peticiones desde cualquier origen
+app.use(bodyParser.json()); // Parsear JSON en el body
+app.use(bodyParser.urlencoded({ extended: true })); // Parsear datos de formularios
+
+
 
 export default app;
