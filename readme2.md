@@ -32,3 +32,34 @@ NOVE_ENV_STAGING=#####
 NOVE_ENV_PRODUCTION=#####
 
 JWT_TOKEN_SECRET=tu_clave_secreta
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { v2 as cloudinary } from 'cloudinary';
+import multer from 'multer';
+import { Request, Response, NextFunction } from 'express';
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME || 'dzhz9nzqu',
+  api_key: process.env.CLOUDINARY_KEY || '529215272241327',
+  api_secret: process.env.CLOUDINARY_SECRET || 'JOgIBCzeAIPuMC0mAXuPI3Jsr9k',
+});
+
+
+const image = "src/main/img/foto.jpg";
+
+cloudinary.uploader.upload(image).then(result => {
+  console.log('URL de la imagen subida:', result.secure_url);
+}).catch(error => {
+  console.error('Error al subir la imagen:', error);
+});

@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity } from "typeorm";
 import { RegistroCita } from "./registrosCitasModel";
 
-@Entity('Citas')
+@Entity('citas')
 export class Cita extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;

@@ -1,7 +1,7 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { RegistroCita } from "./registrosCitasModel";
 
-@Entity('Novios') //NOMBRE DE LA TABLA EN LA BASE DE DATOS
+@Entity('novios') //NOMBRE DE LA TABLA EN LA BASE DE DATOS
 export class Novio extends BaseEntity {
 
     @PrimaryGeneratedColumn()  //UN NUMERO AUTOINCREMENTAL QUE SIRVE COMO ID

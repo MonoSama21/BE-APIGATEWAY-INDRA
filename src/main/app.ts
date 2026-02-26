@@ -1,10 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import usuariosRoutes from './routes/usuariosRoutes';
-import configuracionRoutes from './routes/configuracionRoutes';
-import categoriasRoutes from './routes/categoriasRoutes';
-import platosRoutes from './routes/platosRoutes';
 import noviosRoutes from './routes/noviosRoutes';
 import citasRoutes from './routes/citasRoutes';
 import registroCitaRoutes from './routes/registroCitaRoutes';
@@ -22,15 +18,13 @@ app.get("/", (req: Request, res: Response) => {
     version: "1.0.0",
     endpoints: {
       "/novios": "Gestión de novios",
-      "/recuerdos": "Gestión de recuerdos"
+      "/citas": "Gestión de citas",
+      "/registros-citas": "Gestión de registros de citas"
     }
   });
 });
 
-app.use('/usuarios', usuariosRoutes);
-app.use('/configuracion', configuracionRoutes);
-app.use('/categorias', categoriasRoutes);
-app.use('/platos', platosRoutes);
+
 app.use('/novios', noviosRoutes);
 app.use('/citas', citasRoutes);
 app.use('/registros-citas', registroCitaRoutes);
