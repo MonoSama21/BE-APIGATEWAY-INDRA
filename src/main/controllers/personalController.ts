@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import { Personal } from "../models/personalModel";
 import QRCode from 'qrcode';
+import { ensureConnection } from '../helpers/dbHelper';
 
 class PersonalController {
 
-    async consultar(req: Request, res: Response) { 
+    async consultar(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         const { estado, pagina = 1, limite = 10 } = req.query;
         
         // Construye el filtro dinámicamente
@@ -47,6 +50,8 @@ class PersonalController {
     }
 
     async consultarDetalle(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         const { id } = req.params;
         
         try {
@@ -77,6 +82,8 @@ class PersonalController {
     }
 
     async registrar(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         try {
             const campos = ['dni', 'nombres', 'apellidos', 'cargo'];
             const faltantes = campos.filter(campo => !req.body[campo]);
@@ -156,6 +163,8 @@ class PersonalController {
     }
 
     async actualizar(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         const { id } = req.params;
         
         try {
@@ -240,6 +249,8 @@ class PersonalController {
     }
 
     async cambiarEstado(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         const { id } = req.params;
         const { estado } = req.body;
         
@@ -280,6 +291,8 @@ class PersonalController {
     }
 
     async borrar(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         const { id } = req.params;
         
         try {
