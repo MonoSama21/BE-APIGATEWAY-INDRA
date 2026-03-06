@@ -1,16 +1,8 @@
 import { Request, Response } from "express";
 import { Personal } from "../models/personalModel";
-import { AppDataSource } from "../db/conexion";
 import QRCode from 'qrcode';
 
 class PersonalController {
-    
-    constructor() {
-        if (!AppDataSource.isInitialized) {
-            AppDataSource.initialize();
-        }
-        console.log("PersonalController inicializado y conexión a la base de datos establecida");
-    }
 
     async consultar(req: Request, res: Response) { 
         const { estado, pagina = 1, limite = 10 } = req.query;

@@ -7,10 +7,7 @@ import { generarToken } from '../helpers/auth';
 class UsuariosController {
     
     constructor() {
-        if (!AppDataSource.isInitialized) {
-            AppDataSource.initialize();
-        }
-        console.log("UsuariosController inicializado y conexión a la base de datos establecida");
+        
     }
 
     async consultar(req: Request, res: Response) { 

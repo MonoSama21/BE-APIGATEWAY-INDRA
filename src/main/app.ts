@@ -1,9 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import noviosRoutes from './routes/noviosRoutes';
-import citasRoutes from './routes/citasRoutes';
-import registroCitaRoutes from './routes/registroCitaRoutes';
 import usuariosRoutes from './routes/usuariosRoutes';
 import personalRoutes from './routes/personalRoutes';
 
@@ -34,9 +31,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 
-app.use('/novios', noviosRoutes);
-app.use('/citas', citasRoutes);
-app.use('/registros-citas', registroCitaRoutes);
 app.use('/usuarios', usuariosRoutes);
 app.use('/personal', personalRoutes);
 
