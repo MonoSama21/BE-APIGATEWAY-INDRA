@@ -38,6 +38,7 @@ export const subirAFotosCloudinary = async (req: Request, res: Response, next: N
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error subiendo imágenes a Cloudinary', error });
   }
+  
 };
 
 
