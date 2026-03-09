@@ -3,6 +3,24 @@ import { Asistencia } from "../models/asistenciaModel";
 import { Personal } from "../models/personalModel";
 import { ensureConnection } from "../helpers/dbHelper";
 
+const ZONA_PERU = 'America/Lima';
+
+// Retorna la fecha actual en Perú como 'YYYY-MM-DD'
+function fechaHoy(): string {
+    return new Date().toLocaleDateString('en-CA', { timeZone: ZONA_PERU }); // en-CA → YYYY-MM-DD
+}
+
+// Retorna la hora actual en Perú como 'HH:MM:SS'
+function horaAhora(): string {
+    return new Date().toLocaleTimeString('es-PE', {
+        timeZone: ZONA_PERU,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).replace(/^24:/, '00:'); // por si acaso
+}
+
 class AsistenciaController {
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -77,19 +95,13 @@ class AsistenciaController {
             }
 
             // ── REQ-F-015: Detectar ENTRADA o SALIDA ──────────────────────
-            const hoy = new Date().toISOString().split('T')[0] as string;
+            const hoy = fechaHoy();
+            const horaActual = horaAhora();
 
             const registrosHoy = await Asistencia.find({
                 where: { personalId: personal.id, fecha: hoy },
                 order: { id: 'DESC' }
             });
-
-            const ahora = new Date();
-            const horaActual = [
-                ahora.getHours().toString().padStart(2, '0'),
-                ahora.getMinutes().toString().padStart(2, '0'),
-                ahora.getSeconds().toString().padStart(2, '0')
-            ].join(':');
 
             let asistencia: Asistencia;
             let tipo: string;
@@ -162,7 +174,7 @@ class AsistenciaController {
     async consultarHoy(req: Request, res: Response) {
         await ensureConnection();
         const { personalId } = req.params;
-        const hoy = new Date().toISOString().split('T')[0] as string;
+        const hoy = fechaHoy();
 
         try {
             const registros = await Asistencia.find({
