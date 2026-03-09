@@ -3,6 +3,8 @@ import cors from "cors";
 import morgan from "morgan";
 import usuariosRoutes from './routes/usuariosRoutes';
 import personalRoutes from './routes/personalRoutes';
+import cargosRoutes from './routes/cargosRoutes';
+import asistenciaRoutes from './routes/asistenciaRoutes';
 
 const app = express();
 
@@ -33,5 +35,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use('/usuarios', usuariosRoutes);
 app.use('/personal', personalRoutes);
+app.use('/cargos', cargosRoutes);
+app.use('/asistencia', asistenciaRoutes);
 
 export default app;

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Personal } from "../models/personalModel";
 import QRCode from 'qrcode';
 import { ensureConnection } from '../helpers/dbHelper';
+import { Cargo } from "../models/cargosModel";
 
 class PersonalController {
 
@@ -22,15 +23,25 @@ class PersonalController {
         const skip = (paginaNum - 1) * limiteNum;
 
         try {
-            const [personal, total] = await Personal.findAndCount({
-                select: ['id', 'dni', 'nombres', 'apellidos', 'cargo', 'codigoQR', 'estado'],
-                where,
-                order: {
-                    id: 'DESC'
-                },
-                skip: skip,
-                take: limiteNum
-            });
+            const [personal, total] = await Personal.createQueryBuilder('personal')
+            .leftJoinAndSelect('personal.cargo', 'cargo')
+            .select([
+                'personal.id',
+                'personal.dni',
+                'personal.nombres',
+                'personal.apellidos',
+                'personal.cargoId',
+                'personal.codigoQR',
+                'personal.foto',
+                'personal.estado',
+                'cargo.id',
+                'cargo.cargo'  // Solo id y nombre del cargo
+            ])
+            .where(where)
+            .orderBy('personal.id', 'DESC')
+            .skip(skip)
+            .take(limiteNum)
+            .getManyAndCount();
             
             res.status(200).json({
                 success: true,
@@ -55,10 +66,24 @@ class PersonalController {
         const { id } = req.params;
         
         try {
-            const personal = await Personal.findOne({
-                where: { id: Number(id) },
-                select: ["id", "dni", "nombres", "apellidos", "cargo", "codigoQR", "estado"]
-            });
+            const personal = await Personal.createQueryBuilder('personal')
+            .leftJoinAndSelect('personal.cargo', 'cargo')
+            .select([
+                'personal.id',
+                'personal.dni',
+                'personal.nombres',
+                'personal.apellidos',
+                'personal.cargoId',
+                'personal.codigoQR',
+                'personal.foto',
+                'personal.estado',
+                'cargo.id',
+                'cargo.cargo',
+                'cargo.descripcion'
+            ])
+            .where('personal.id = :id', { id: Number(id) })
+            .getOne();
+        
             
             if (!personal) {
                 return res.status(404).json({
@@ -85,7 +110,7 @@ class PersonalController {
         // ✅ Asegurar conexión antes de consultar
         await ensureConnection();
         try {
-            const campos = ['dni', 'nombres', 'apellidos', 'cargo'];
+            const campos = ['dni', 'nombres', 'apellidos', 'cargoId'];
             const faltantes = campos.filter(campo => !req.body[campo]);
             
             // VALIDACION DE CAMPOS FALTANTES
@@ -93,6 +118,15 @@ class PersonalController {
                 return res.status(400).json({ 
                     success: false,
                     message: `Faltan campos obligatorios: ${faltantes.join(', ')}`
+                });
+            }
+
+            // ✅ VALIDAR QUE EL CARGO EXISTA
+            const cargoExiste = await Cargo.findOneBy({ id: req.body.cargoId });
+            if (!cargoExiste) {
+                return res.status(400).json({
+                    success: false,
+                    message: "El cargo especificado no existe"
                 });
             }
 
@@ -123,7 +157,7 @@ class PersonalController {
                 dni: registro.dni,
                 nombres: registro.nombres,
                 apellidos: registro.apellidos,
-                cargo: registro.cargo
+                cargoId: registro.cargoId
             });
 
             // Generar QR como base64
@@ -138,17 +172,17 @@ class PersonalController {
             registro.codigoQR = qrBase64;
             await registro.save();
 
+            // ✅ Cargar la relación del cargo para la respuesta
+            const personalConCargo = await Personal.findOne({
+                where: { id: registro.id },
+                relations: ['cargo']
+            });
+
             res.status(201).json({
                 success: true,
                 message: `Personal ${registro.nombres} ${registro.apellidos} con ID ${registro.id} creado exitosamente`,
                 personal: {
-                    id: registro.id,
-                    dni: registro.dni,
-                    nombres: registro.nombres,
-                    apellidos: registro.apellidos,
-                    cargo: registro.cargo,
-                    codigoQR: registro.codigoQR,
-                    estado: registro.estado
+                    personalConCargo
                 }
             });
 
@@ -202,16 +236,27 @@ class PersonalController {
             personal.dni = dni || personal.dni;
             personal.nombres = nombres || personal.nombres;
             personal.apellidos = apellidos || personal.apellidos;
-            personal.cargo = cargo || personal.cargo;
+            
+            // Si se proporciona cargoId, validar que exista
+            if (req.body.cargoId) {
+                const cargoExiste = await Cargo.findOneBy({ id: req.body.cargoId });
+                if (!cargoExiste) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "El cargo especificado no existe"
+                    });
+                }
+                personal.cargoId = req.body.cargoId;
+            }
 
             // REGENERAR CÓDIGO QR si cambió algún dato
-            if (dni || nombres || apellidos || cargo) {
+            if (dni || nombres || apellidos || req.body.cargoId) {
                 const dataQR = JSON.stringify({
                     id: personal.id,
                     dni: personal.dni,
                     nombres: personal.nombres,
                     apellidos: personal.apellidos,
-                    cargo: personal.cargo
+                    cargoId: personal.cargoId
                 });
 
                 personal.codigoQR = await QRCode.toDataURL(dataQR, {
@@ -224,18 +269,16 @@ class PersonalController {
 
             await personal.save();
 
+            // Recargar con la relación del cargo
+            const personalActualizado = await Personal.findOne({
+                where: { id: personal.id },
+                relations: ['cargo']
+            });
+
             res.status(200).json({ 
                 success: true,
                 message: "Datos del personal actualizados correctamente", 
-                personal: {
-                    id: personal.id,
-                    dni: personal.dni,
-                    nombres: personal.nombres,
-                    apellidos: personal.apellidos,
-                    cargo: personal.cargo,
-                    codigoQR: personal.codigoQR,
-                    estado: personal.estado
-                }
+                personal: personalActualizado
             });
         
         } catch (error) {
@@ -267,16 +310,62 @@ class PersonalController {
             personal.estado = estado;
             await personal.save();
 
+            // Recargar con la relación del cargo
+            const personalActualizado = await Personal.findOne({
+                where: { id: personal.id },
+                relations: ['cargo']
+            });
+
             res.status(200).json({
                 success: true,
                 message: `Personal ${estado ? 'activado' : 'desactivado'} correctamente`,
+                personal: personalActualizado
+            });
+
+        } catch (error) {
+            if (error instanceof Error) {
+                res.status(500).json({
+                    success: false,
+                    message: error.message
+                });
+            }
+        }
+    }
+
+    async subirFoto(req: Request, res: Response) {
+        await ensureConnection();
+        const { id } = req.params;
+        
+        try {
+            const personal = await Personal.findOneBy({ id: Number(id) });
+            
+            if (!personal) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Personal no encontrado"
+                });
+            }
+
+            // Obtener la URL de Cloudinary del middleware
+            const fotoUrl = (req as any).fotoCloudinary;
+            
+            if (!fotoUrl) {
+                return res.status(400).json({
+                    success: false,
+                    message: "No se proporcionó ninguna foto"
+                });
+            }
+
+            // Actualizar la foto
+            personal.foto = fotoUrl;
+            await personal.save();
+
+            res.status(200).json({
+                success: true,
+                message: "Foto subida exitosamente",
                 personal: {
                     id: personal.id,
-                    dni: personal.dni,
-                    nombres: personal.nombres,
-                    apellidos: personal.apellidos,
-                    cargo: personal.cargo,
-                    estado: personal.estado
+                    foto: personal.foto
                 }
             });
 

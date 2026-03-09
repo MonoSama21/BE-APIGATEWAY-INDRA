@@ -1,19 +1,382 @@
 openapi: 3.0.3
 info:
-  title: API RestauranteQR
-  version: 1.0.0
-  description: API para gestión de usuarios (novios), citas, registros de citas y fotos asociadas.
+  title: API Sistema de Asistencia QR - UGEL
+  version: 2.0.0
+  description: |
+    API REST para el Sistema de Control de Asistencia mediante código QR de la UGEL.
+    
+    Gestiona usuarios del sistema, personal docente/administrativo, cargos y registros
+    de asistencia (entrada/salida) mediante escaneo de código QR único por empleado.
+    
+    **Autenticación:** Los endpoints protegidos requieren un token JWT en el header
+    `Authorization: Bearer <token>`. El token se obtiene en `POST /usuarios/login`.
+
 servers:
   - url: http://localhost:6500
+    description: Servidor de desarrollo local
+  - url: https://be-asistencia-qrugel.vercel.app
+    description: Servidor de producción (Vercel)
+
+tags:
+  - name: Usuarios
+    description: Gestión de usuarios del sistema y autenticación
+  - name: Personal
+    description: Gestión del personal (docentes / administrativos) y sus códigos QR
+  - name: Cargos
+    description: Catálogo de cargos o puestos laborales
+  - name: Asistencia
+    description: Registro y consulta de asistencia mediante código QR
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ── Usuarios ──────────────────────────────────────────────
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          example: "juan@ugel.gob.pe"
+        rol:
+          type: string
+          example: "admin"
+        telefono:
+          type: string
+          example: "987654321"
+        estado:
+          type: boolean
+          example: true
+
+    # ── Cargos ────────────────────────────────────────────────
+    Cargo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        cargo:
+          type: string
+          example: "Director"
+        descripcion:
+          type: string
+          example: "Director de la institución educativa"
+        estado:
+          type: boolean
+          example: true
+        createdat:
+          type: string
+          format: date-time
+        updatedat:
+          type: string
+          format: date-time
+
+    # ── Personal ──────────────────────────────────────────────
+    Personal:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        dni:
+          type: string
+          minLength: 8
+          maxLength: 8
+          example: "12345678"
+        nombres:
+          type: string
+          example: "María"
+        apellidos:
+          type: string
+          example: "García López"
+        cargoId:
+          type: integer
+          example: 2
+        cargo:
+          $ref: '#/components/schemas/Cargo'
+        codigoQR:
+          type: string
+          description: Imagen QR codificada en base64 (data URI PNG)
+          example: "data:image/png;base64,iVBORw0KGgoAAAANS..."
+        foto:
+          type: string
+          nullable: true
+          description: URL de la foto del personal en Cloudinary
+          example: "https://res.cloudinary.com/.../personal/foto.jpg"
+        estado:
+          type: boolean
+          example: true
+        createdat:
+          type: string
+          format: date-time
+        updatedat:
+          type: string
+          format: date-time
+
+    # ── Asistencia ────────────────────────────────────────────
+    Asistencia:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+        personalId:
+          type: integer
+          example: 5
+        personal:
+          type: object
+          properties:
+            id:
+              type: integer
+            dni:
+              type: string
+            nombres:
+              type: string
+            apellidos:
+              type: string
+            cargo:
+              type: object
+              properties:
+                cargo:
+                  type: string
+        fecha:
+          type: string
+          format: date
+          example: "2026-03-08"
+        horaEntrada:
+          type: string
+          format: time
+          nullable: true
+          example: "08:05:12"
+        horaSalida:
+          type: string
+          format: time
+          nullable: true
+          example: "17:00:45"
+        horasTrabajadas:
+          type: string
+          nullable: true
+          description: Tiempo trabajado en formato HH:MM
+          example: "08:55"
+        estado:
+          type: string
+          enum: [EN_CURSO, COMPLETO]
+          example: "COMPLETO"
+        createdat:
+          type: string
+          format: date-time
+
+    # ── Respuestas genéricas ──────────────────────────────────
+    RespuestaExito:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+
+    RespuestaError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Descripción del error"
+
+    RespuestaPaginada:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        total:
+          type: integer
+          example: 50
+        pagina:
+          type: integer
+          example: 1
+        limite:
+          type: integer
+          example: 10
+
+# ══════════════════════════════════════════════════════════════
+# PATHS
+# ══════════════════════════════════════════════════════════════
 paths:
-  /novios:
+
+  # ─────────────────────────────────────────────────────────────
+  # USUARIOS
+  # ─────────────────────────────────────────────────────────────
+  /usuarios:
+    post:
+      tags: [Usuarios]
+      summary: Registrar un nuevo usuario del sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nombre, email, telefono, password, rol]
+              properties:
+                nombre:
+                  type: string
+                  example: "Juan Pérez"
+                email:
+                  type: string
+                  format: email
+                  example: "juan@ugel.gob.pe"
+                telefono:
+                  type: string
+                  example: "987654321"
+                password:
+                  type: string
+                  format: password
+                  example: "contraseña123"
+                rol:
+                  type: string
+                  example: "admin"
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaExito'
+                  - type: object
+                    properties:
+                      message:
+                        example: "Usuario Juan Pérez con ID 1 creado exitosamente"
+        '400':
+          description: Faltan campos, email duplicado o nombre duplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
     get:
-      summary: Obtener todos los usuarios
+      tags: [Usuarios]
+      summary: Obtener lista de usuarios con paginación
+      parameters:
+        - in: query
+          name: estado
+          schema:
+            type: boolean
+          description: Filtrar por estado activo/inactivo
+          example: true
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            default: 1
+          description: Número de página
+        - in: query
+          name: limite
+          schema:
+            type: integer
+            default: 10
+          description: Cantidad de resultados por página
       responses:
         '200':
-          description: Lista de usuarios
+          description: Lista de usuarios paginada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaPaginada'
+                  - type: object
+                    properties:
+                      usuarios:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Usuario'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /usuarios/login:
     post:
-      summary: Registrar un nuevo usuario
+      tags: [Usuarios]
+      summary: Iniciar sesión y obtener token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "juan@ugel.gob.pe"
+                password:
+                  type: string
+                  format: password
+                  example: "contraseña123"
+      responses:
+        '200':
+          description: Login exitoso — retorna token JWT
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Login exitoso"
+                  token:
+                    type: string
+                    description: Token JWT para usar en endpoints protegidos
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  usuariologeado:
+                    $ref: '#/components/schemas/Usuario'
+        '400':
+          description: Usuario no encontrado o contraseña incorrecta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /usuarios/datos:
+    put:
+      tags: [Usuarios]
+      summary: Actualizar datos del usuario autenticado
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -23,47 +386,634 @@ paths:
               properties:
                 nombre:
                   type: string
+                  example: "Juan Carlos Pérez"
                 email:
                   type: string
+                  format: email
+                  example: "juancarlos@ugel.gob.pe"
                 telefono:
                   type: string
-                password:
-                  type: string
+                  example: "912345678"
       responses:
-        '201':
-          description: Usuario creado
-  /novios/login:
-    post:
-      summary: Login de usuario
+        '200':
+          description: Datos actualizados exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaExito'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /usuarios/password:
+    put:
+      tags: [Usuarios]
+      summary: Cambiar contraseña del usuario autenticado
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [password]
               properties:
-                email:
-                  type: string
                 password:
                   type: string
+                  format: password
+                  example: "nuevaContraseña456"
       responses:
         '200':
-          description: Login exitoso
-  /novios/{id}:
+          description: Contraseña actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaExito'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /usuarios/{id}:
     get:
-      summary: Obtener detalle de usuario
+      tags: [Usuarios]
+      summary: Obtener detalle de un usuario por ID
       parameters:
         - in: path
           name: id
           required: true
           schema:
             type: integer
+          description: ID del usuario
+          example: 1
       responses:
         '200':
-          description: Detalle de usuario
-  /novios/password:
+          description: Detalle del usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  usuario:
+                    $ref: '#/components/schemas/Usuario'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    delete:
+      tags: [Usuarios]
+      summary: Eliminar un usuario por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del usuario a eliminar
+          example: 1
+      responses:
+        '200':
+          description: Usuario eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaExito'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  # ─────────────────────────────────────────────────────────────
+  # CARGOS
+  # ─────────────────────────────────────────────────────────────
+  /cargos:
+    post:
+      tags: [Cargos]
+      summary: Registrar un nuevo cargo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [cargo, descripcion]
+              properties:
+                cargo:
+                  type: string
+                  example: "Docente"
+                descripcion:
+                  type: string
+                  example: "Docente de educación primaria"
+      responses:
+        '201':
+          description: Cargo registrado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: string
+                    example: "Cargo 'Docente' registrado exitosamente con ID 3"
+        '400':
+          description: Faltan campos o el cargo ya existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    get:
+      tags: [Cargos]
+      summary: Obtener lista de cargos
+      parameters:
+        - in: query
+          name: estado
+          schema:
+            type: boolean
+          description: Filtrar por estado activo/inactivo
+          example: true
+      responses:
+        '200':
+          description: Lista de cargos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  succes:
+                    type: boolean
+                    example: true
+                  cargos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Cargo'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /cargos/{id}:
     put:
-      summary: Cambiar contraseña
+      tags: [Cargos]
+      summary: Actualizar un cargo por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del cargo
+          example: 2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cargo:
+                  type: string
+                  example: "Docente Titular"
+                descripcion:
+                  type: string
+                  example: "Docente titular de educación secundaria"
+                estado:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Cargo actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  cargo:
+                    $ref: '#/components/schemas/Cargo'
+        '400':
+          description: El nombre del cargo ya está en uso por otro registro
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Cargo no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    delete:
+      tags: [Cargos]
+      summary: Eliminar un cargo por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del cargo a eliminar
+          example: 2
+      responses:
+        '200':
+          description: Cargo eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaExito'
+        '404':
+          description: Cargo no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  # ─────────────────────────────────────────────────────────────
+  # PERSONAL
+  # ─────────────────────────────────────────────────────────────
+  /personal:
+    post:
+      tags: [Personal]
+      summary: Registrar nuevo personal y generar su código QR
+      description: |
+        Crea un nuevo empleado en el sistema. Al registrarse, se genera
+        automáticamente un código QR único (base64 PNG) que contiene
+        `{ id, dni, nombres, apellidos, cargoId }`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dni, nombres, apellidos, cargoId]
+              properties:
+                dni:
+                  type: string
+                  minLength: 8
+                  maxLength: 8
+                  example: "12345678"
+                nombres:
+                  type: string
+                  example: "María"
+                apellidos:
+                  type: string
+                  example: "García López"
+                cargoId:
+                  type: integer
+                  description: ID del cargo existente en la tabla cargos
+                  example: 2
+      responses:
+        '201':
+          description: Personal registrado exitosamente con QR generado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Personal María García López con ID 5 creado exitosamente"
+                  personal:
+                    type: object
+                    properties:
+                      personalConCargo:
+                        $ref: '#/components/schemas/Personal'
+        '400':
+          description: Faltan campos, DNI duplicado, DNI inválido o cargo inexistente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    get:
+      tags: [Personal]
+      summary: Obtener lista de personal con paginación y relación de cargo
+      parameters:
+        - in: query
+          name: estado
+          schema:
+            type: boolean
+          description: Filtrar por estado activo/inactivo
+          example: true
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            default: 1
+          description: Número de página
+        - in: query
+          name: limite
+          schema:
+            type: integer
+            default: 10
+          description: Resultados por página
+      responses:
+        '200':
+          description: Lista paginada de personal
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaPaginada'
+                  - type: object
+                    properties:
+                      personal:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Personal'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /personal/{id}:
+    get:
+      tags: [Personal]
+      summary: Obtener detalle de un empleado por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del personal
+          example: 5
+      responses:
+        '200':
+          description: Detalle del personal con cargo completo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  personal:
+                    $ref: '#/components/schemas/Personal'
+        '404':
+          description: Personal no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    put:
+      tags: [Personal]
+      summary: Actualizar datos de un empleado
+      description: |
+        Actualiza los datos del personal. Si se cambia el `cargoId`, el DNI,
+        o algún dato relevante, el código QR se regenera automáticamente.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del personal
+          example: 5
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dni:
+                  type: string
+                  example: "87654321"
+                nombres:
+                  type: string
+                  example: "María Elena"
+                apellidos:
+                  type: string
+                  example: "García Ruiz"
+                cargoId:
+                  type: integer
+                  example: 3
+      responses:
+        '200':
+          description: Personal actualizado (QR regenerado si aplica)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                  personal:
+                    $ref: '#/components/schemas/Personal'
+        '400':
+          description: DNI duplicado, DNI inválido o cargo inexistente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Personal no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    delete:
+      tags: [Personal]
+      summary: Eliminar un empleado por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del personal a eliminar
+          example: 5
+      responses:
+        '200':
+          description: Personal eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaExito'
+        '404':
+          description: Personal no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /personal/{id}/estado:
+    put:
+      tags: [Personal]
+      summary: Cambiar estado activo/inactivo de un empleado
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del personal
+          example: 5
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado:
+                  type: boolean
+                  example: false
+      responses:
+        '200':
+          description: Estado actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaExito'
+        '404':
+          description: Personal no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /personal/{id}/foto:
+    post:
+      tags: [Personal]
+      summary: Subir o actualizar la foto de un empleado
+      description: |
+        Sube una imagen al servicio Cloudinary (carpeta `personal`) y
+        guarda la URL resultante en el campo `foto` del empleado.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del personal
+          example: 5
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [foto]
+              properties:
+                foto:
+                  type: string
+                  format: binary
+                  description: Archivo de imagen (JPG, PNG, WEBP, etc.)
+      responses:
+        '200':
+          description: Foto subida y URL guardada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Foto actualizada exitosamente"
+                  foto:
+                    type: string
+                    example: "https://res.cloudinary.com/.../personal/abc123.jpg"
+        '400':
+          description: No se proporcionó ninguna imagen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Personal no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  # ─────────────────────────────────────────────────────────────
+  # ASISTENCIA
+  # ─────────────────────────────────────────────────────────────
+  /asistencia/registrar:
+    post:
+      tags: [Asistencia]
+      summary: "REQ-F-006 + REQ-F-014 + REQ-F-015: Validar QR y registrar entrada/salida"
+      description: |
+        Recibe directamente el contenido del QR escaneado. Internamente:
+        1. **Valida el QR** (REQ-F-014): verifica formato, busca al empleado por `id` y `dni`, y comprueba que esté activo.
+        2. **Detecta automáticamente** ENTRADA o SALIDA (REQ-F-015):
+
+        | Situación al momento del escaneo | Acción |
+        |---|---|
+        | Sin registros hoy | Crea nueva ENTRADA (`estado: EN_CURSO`) |
+        | Tiene ENTRADA sin SALIDA | Registra SALIDA, calcula `horasTrabajadas` (`estado: COMPLETO`) |
+        | Registro del día completo | Crea nueva ENTRADA (horario extendido) |
+
+        `horasTrabajadas` se calcula como la diferencia entre `horaEntrada` y `horaSalida` en formato **HH:MM**.
       security:
         - bearerAuth: []
       requestBody:
@@ -72,96 +1022,176 @@ paths:
           application/json:
             schema:
               type: object
+              required: [qrData]
               properties:
-                password:
+                qrData:
                   type: string
+                  description: Contenido del código QR escaneado (JSON string)
+                  example: '{"id":5,"dni":"12345678","nombres":"María","apellidos":"García López","cargoId":2}'
       responses:
         '200':
-          description: Contraseña cambiada
-  /citas:
+          description: Entrada o salida registrada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  tipo:
+                    type: string
+                    enum: [ENTRADA, SALIDA]
+                    example: "ENTRADA"
+                  message:
+                    type: string
+                    example: "Entrada registrada exitosamente"
+                  asistencia:
+                    $ref: '#/components/schemas/Asistencia'
+        '400':
+          description: No se proporcionó el ID del personal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /asistencia/hoy/{personalId}:
     get:
-      summary: Obtener citas paginadas
+      tags: [Asistencia]
+      summary: Obtener registros de asistencia del día actual de un empleado
+      description: |
+        Retorna todos los registros de asistencia del día corriente
+        para el personal indicado, junto con el total de horas trabajadas
+        acumuladas en el día.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: personalId
+          required: true
+          schema:
+            type: integer
+          description: ID del personal
+          example: 5
+      responses:
+        '200':
+          description: Registros del día y total de horas trabajadas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  fecha:
+                    type: string
+                    format: date
+                    example: "2026-03-08"
+                  registros:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Asistencia'
+                  totalHoras:
+                    type: string
+                    description: Suma de horas trabajadas en el día en formato HH:MM
+                    example: "08:55"
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /asistencia/reporte:
+    get:
+      tags: [Asistencia]
+      summary: "REQ-F-007: Reporte de asistencias con filtros y paginación"
+      description: |
+        Genera un reporte detallado de asistencias. Permite filtrar por:
+        - Rango de fechas (`fechaInicio` y/o `fechaFin`)
+        - Personal específico (`personalId`)
+        - Paginación (`pagina`, `limite`)
+        
+        Los resultados incluyen datos completos del personal y su cargo.
+        Ordenados por fecha descendente.
       security:
         - bearerAuth: []
       parameters:
         - in: query
-          name: page
+          name: fechaInicio
           schema:
-            type: integer
+            type: string
+            format: date
+          description: Fecha de inicio del rango (YYYY-MM-DD)
+          example: "2026-03-01"
         - in: query
-          name: limit
+          name: fechaFin
+          schema:
+            type: string
+            format: date
+          description: Fecha de fin del rango (YYYY-MM-DD)
+          example: "2026-03-31"
+        - in: query
+          name: personalId
           schema:
             type: integer
+          description: Filtrar por un empleado específico (opcional)
+          example: 5
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            default: 1
+          description: Número de página
+        - in: query
+          name: limite
+          schema:
+            type: integer
+            default: 10
+          description: Resultados por página
       responses:
         '200':
-          description: Lista de citas
-  /registros-citas:
-    post:
-      summary: Registrar una cita con fotos
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                citaId:
-                  type: integer
-                comentario:
-                  type: string
-                fotos:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-      responses:
-        '201':
-          description: Registro creado
-    get:
-      summary: Consultar registros de citas
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-        - in: query
-          name: limit
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Lista de registros
-  /registros-citas/{id}:
-    patch:
-      summary: Actualizar registro de cita (comentario, citaId, fotos)
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: false
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                citaId:
-                  type: integer
-                comentario:
-                  type: string
-                fotos:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-      responses:
-        '200':
-          description: Registro actualizado
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+          description: Reporte de asistencias paginado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaPaginada'
+                  - type: object
+                    properties:
+                      asistencias:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Asistencia'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+  

@@ -9,7 +9,10 @@ cloudinary.config({
 });
 
 const storage = multer.memoryStorage();
-export const uploadFotos = multer({
+
+
+// ✅ Middleware para una sola foto (Personal)
+export const uploadFotoPersonal = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
@@ -17,29 +20,32 @@ export const uploadFotos = multer({
     if (allowedTypes.includes(file.mimetype)) cb(null, true);
     else cb(new Error('Solo se permiten archivos JPEG, JPG y PNG'));
   }
-}).array('fotos', 2);
+}).single('foto');
 
-export const subirAFotosCloudinary = async (req: Request, res: Response, next: NextFunction) => {
+
+
+// ✅ Middleware para subir una sola foto a Cloudinary (Personal)
+export const subirFotoPersonalCloudinary = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!req.files || !(req.files instanceof Array)) return next();
+    if (!req.file) return next();
 
-    const urls: string[] = [];
-    for (const file of req.files as Express.Multer.File[]) {
-      const result = await new Promise<{ url: string }>((resolve, reject) => {
-        cloudinary.uploader.upload_stream({ folder: 'citas' }, (error, result) => {
+    const result = await new Promise<{ url: string }>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: 'personal' },
+        (error, result) => {
           if (error) return reject(error);
           resolve({ url: result?.secure_url || '' });
-        }).end(file.buffer);
-      });
-      urls.push(result.url);
-    }
-    (req as any).fotosCloudinary = urls;
+        }
+      ).end(req.file!.buffer);
+    });
+
+    (req as any).fotoCloudinary = result.url;
     next();
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error subiendo imágenes a Cloudinary', error });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error subiendo la foto a Cloudinary', 
+      error 
+    });
   }
-  
 };
-
-
-

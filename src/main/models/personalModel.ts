@@ -1,4 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Cargo } from "./cargosModel";
 
 @Entity('personal')
 export class Personal extends BaseEntity {
@@ -14,11 +15,18 @@ export class Personal extends BaseEntity {
     @Column()
     apellidos: string;
 
+    @ManyToOne(() => Cargo)
+    @JoinColumn({ name: 'cargoId' })
+    cargo: Cargo;
+
     @Column()
-    cargo: string;
+    cargoId: number;
 
     @Column({ nullable: true })
     codigoQR: string;
+
+    @Column({ nullable: true })
+    foto: string;
 
     @Column({ default: true })
     estado: boolean;
