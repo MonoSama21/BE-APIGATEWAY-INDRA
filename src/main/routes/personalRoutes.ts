@@ -12,7 +12,8 @@ router.get('/', verificarToken, autorizarPorRol(['Admin']), personalController.c
 router.route("/:id")
     .get(verificarToken, autorizarPorRol(['Admin']), personalController.consultarDetalle)
     .put(verificarToken, autorizarPorRol(['Admin']), personalController.actualizar)
-    .delete(verificarToken, autorizarPorRol(['Admin']), personalController.borrar);
+    .delete(verificarToken, autorizarPorRol(['Admin']), personalController.borrar)
+    .put(verificarToken, autorizarPorRol(['Admin']), personalController.actualizar);
 
 router.put("/:id/estado", verificarToken, autorizarPorRol(['Admin']), personalController.cambiarEstado);
 
