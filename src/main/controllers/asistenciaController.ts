@@ -3,6 +3,7 @@ import { Asistencia } from "../models/asistenciaModel";
 import { Personal } from "../models/personalModel";
 import { ensureConnection } from "../helpers/dbHelper";
 
+
 const ZONA_PERU = 'America/Lima';
 
 // Retorna la fecha actual en Perú como 'YYYY-MM-DD'
