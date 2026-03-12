@@ -3,7 +3,6 @@ import { AppDataSource } from './db/conexion';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-
 dotenv.config();
 
 const PORT = process.env.PORT || 6500;
@@ -12,6 +11,9 @@ const PORT = process.env.PORT || 6500;
 app.use(cors()); // Permitir peticiones desde cualquier origen
 app.use(bodyParser.json()); // Parsear JSON en el body
 app.use(bodyParser.urlencoded({ extended: true })); // Parsear datos de formularios
+
+
+
 
 // Inicializar TypeORM y arrancar el servidor solo si la conexión es exitosa
 AppDataSource.initialize()

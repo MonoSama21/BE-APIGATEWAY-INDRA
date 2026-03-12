@@ -3,17 +3,17 @@ import { Usuario } from "../models/usuariosModel";
 import { AppDataSource } from "../db/conexion";
 import bcrypt from 'bcrypt';
 import { generarToken } from '../helpers/auth';
+import { ensureConnection } from '../helpers/dbHelper';
 
 class UsuariosController {
     
     constructor() {
-        if (!AppDataSource.isInitialized) {
-            AppDataSource.initialize();
-        }
-        console.log("UsuariosController inicializado y conexión a la base de datos establecida");
+        
     }
 
-    async consultar(req: Request, res: Response) { 
+    async consultar(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
 
         const { estado, pagina = 1, limite = 10 } = req.query;
         
@@ -58,7 +58,8 @@ class UsuariosController {
 
     async consultarDetalle(req: Request, res: Response) {
         const { id } = req.params;
-        
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         try {
             const usuario = await Usuario.findOne({
                 where: { id: Number(id) },
@@ -85,6 +86,9 @@ class UsuariosController {
     }
 
     async registrar(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de registrar
+        await ensureConnection();
+
         try {
             const campos = ['nombre', 'email', 'telefono', 'password', 'rol'];
             const faltantes = campos.filter(campo => !req.body[campo]);
@@ -138,6 +142,8 @@ class UsuariosController {
     }
 
     async login(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         try {
 
             const { email, password } = req.body;
@@ -179,6 +185,9 @@ class UsuariosController {
     }
 
     async cambiarDatos(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de actualizar
+        await ensureConnection();
+
         try {
             const { nombre, telefono, email } = req.body;
             const emailUsuario = (req as any).usuario.email; // El middleware debe poner el email en req.usuario
@@ -239,6 +248,8 @@ class UsuariosController {
     }
 
     async cambiarPassword(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
         try {
             const { passwordActual, passwordNueva } = req.body;
             const email = (req as any).usuario.email; // El middleware debe poner el email en req.usuario
@@ -266,6 +277,9 @@ class UsuariosController {
     }
 
     async borrar(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de consultar
+        await ensureConnection();
+        
         const { id } = req.params;
         try {
             const usuario = await Usuario.findOneBy({ id: Number(id) });
