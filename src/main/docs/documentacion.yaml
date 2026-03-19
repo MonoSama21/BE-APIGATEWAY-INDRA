@@ -24,6 +24,10 @@ tags:
     description: Gestión del personal (docentes / administrativos) y sus códigos QR
   - name: Cargos
     description: Catálogo de cargos o puestos laborales
+  - name: Distritos
+    description: Catálogo de distritos o zonas educativas
+  - name: Instituciones Educativas
+    description: Catálogo de instituciones educativas con niveles/modalidades
   - name: Asistencia
     description: Registro y consulta de asistencia mediante código QR
 
@@ -82,6 +86,74 @@ components:
           type: string
           format: date-time
 
+    # ── Distritos ─────────────────────────────────────────────
+    Distrito:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        distrito:
+          type: string
+          example: "Grocio Prado"
+        alias:
+          type: string
+          example: "GP"
+        estado:
+          type: boolean
+          example: true
+        createdat:
+          type: string
+          format: date-time
+        updatedat:
+          type: string
+          format: date-time
+
+    # ── Instituciones Educativas ──────────────────────────────
+    InstitucionEducativa:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        codigoModular:
+          type: string
+          description: Código modular único de la institución educativa
+          example: "0281774"
+        nombreIE:
+          type: string
+          description: Nombre oficial de la institución educativa
+          example: "22226 NUESTRA SEÑORA DE FATIMA"
+        nivelModalidad:
+          type: string
+          enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
+          description: Nivel/modalidad educativa de la institución
+          example: "PRIMARIA"
+        distritoId:
+          type: integer
+          nullable: true
+          description: ID del distrito donde está ubicada la institución educativa
+          example: 1
+        distrito:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            distrito:
+              type: string
+            alias:
+              type: string
+        estado:
+          type: boolean
+          example: true
+        createdat:
+          type: string
+          format: date-time
+        updatedat:
+          type: string
+          format: date-time
+
     # ── Personal ──────────────────────────────────────────────
     Personal:
       type: object
@@ -105,9 +177,38 @@ components:
           example: 2
         cargo:
           $ref: '#/components/schemas/Cargo'
+        distritoId:
+          type: integer
+          nullable: true
+          example: 1
+        distrito:
+          $ref: '#/components/schemas/Distrito'
+        nivelModalidad:
+          type: string
+          nullable: true
+          enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
+          description: Nivel/modalidad de la institución educativa (debe coincidir con la nivelModalidad de institucionEducativa)
+          example: "PRIMARIA"
+        institucionEducativaId:
+          type: integer
+          nullable: true
+          description: ID de la institución educativa. Si se proporciona, su nivelModalidad debe coincidir con el nivelModalidad del personal
+          example: 2
+        institucionEducativa:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            codigoModular:
+              type: string
+            nombreIE:
+              type: string
+            nivelModalidad:
+              type: string
         codigoQR:
           type: string
-          description: Imagen QR codificada en base64 (data URI PNG)
+          description: Imagen QR codificada en base64 (data URI PNG) que contiene {id, dni, nombres, apellidos, cargoId, distritoId}
           example: "data:image/png;base64,iVBORw0KGgoAAAANS..."
         foto:
           type: string
@@ -145,10 +246,36 @@ components:
               type: string
             apellidos:
               type: string
+            nivelModalidad:
+              type: string
+              nullable: true
+              enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
             cargo:
               type: object
               properties:
                 cargo:
+                  type: string
+            distrito:
+              type: object
+              nullable: true
+              properties:
+                id:
+                  type: integer
+                distrito:
+                  type: string
+                alias:
+                  type: string
+            institucionEducativa:
+              type: object
+              nullable: true
+              properties:
+                id:
+                  type: integer
+                codigoModular:
+                  type: string
+                nombreIE:
+                  type: string
+                nivelModalidad:
                   type: string
         fecha:
           type: string
@@ -173,6 +300,26 @@ components:
           type: string
           enum: [EN_CURSO, COMPLETO]
           example: "COMPLETO"
+        usuarioIdEntrada:
+          type: integer
+          nullable: true
+          description: ID del usuario que registró la ENTRADA (auditoría)
+          example: 2
+        usuarioNombreEntrada:
+          type: string
+          nullable: true
+          description: Nombre del usuario que registró la ENTRADA (auditoría)
+          example: "Personal Sistema"
+        usuarioIdSalida:
+          type: integer
+          nullable: true
+          description: ID del usuario que registró la SALIDA (auditoría)
+          example: 1
+        usuarioNombreSalida:
+          type: string
+          nullable: true
+          description: Nombre del usuario que registró la SALIDA (auditoría)
+          example: "Admin UGEL"
         createdat:
           type: string
           format: date-time
@@ -675,6 +822,176 @@ paths:
                 $ref: '#/components/schemas/RespuestaError'
 
   # ─────────────────────────────────────────────────────────────
+  # DISTRITOS
+  # ─────────────────────────────────────────────────────────────
+  /distritos:
+    post:
+      tags: [Distritos]
+      summary: Crear un nuevo distrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [distrito, alias]
+              properties:
+                distrito:
+                  type: string
+                  example: "Grocio Prado"
+                alias:
+                  type: string
+                  example: "GP"
+      responses:
+        '201':
+          description: Distrito creado exitosamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaExito'
+                  - type: object
+                    properties:
+                      distrito:
+                        $ref: '#/components/schemas/Distrito'
+        '400':
+          description: Faltan campos o distrito duplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    get:
+      tags: [Distritos]
+      summary: Obtener lista de distritos
+      parameters:
+        - in: query
+          name: estado
+          schema:
+            type: boolean
+          description: Filtrar por estado activo/inactivo
+          example: true
+      responses:
+        '200':
+          description: Lista de distritos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  distritos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Distrito'
+
+  /distritos/{id}:
+    put:
+      tags: [Distritos]
+      summary: Actualizar un distrito
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del distrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                distrito:
+                  type: string
+                  example: "Chincha Alta"
+                alias:
+                  type: string
+                  example: "CA"
+                estado:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Distrito actualizado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaExito'
+                  - type: object
+                    properties:
+                      distrito:
+                        $ref: '#/components/schemas/Distrito'
+        '404':
+          description: Distrito no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    patch:
+      tags: [Distritos]
+      summary: Cambiar estado de un distrito
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del distrito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado:
+                  type: boolean
+                  example: false
+      responses:
+        '200':
+          description: Estado del distrito cambiado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaExito'
+                  - type: object
+                    properties:
+                      distrito:
+                        $ref: '#/components/schemas/Distrito'
+
+    delete:
+      tags: [Distritos]
+      summary: Desactivar un distrito
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del distrito
+      responses:
+        '200':
+          description: Distrito desactivado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaExito'
+        '404':
+          description: Distrito no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  # ─────────────────────────────────────────────────────────────
   # PERSONAL
   # ─────────────────────────────────────────────────────────────
   /personal:
@@ -684,7 +1001,18 @@ paths:
       description: |
         Crea un nuevo empleado en el sistema. Al registrarse, se genera
         automáticamente un código QR único (base64 PNG) que contiene
-        `{ id, dni, nombres, apellidos, cargoId }`.
+        `{ id, dni, nombres, apellidos, cargoId, distritoId }`.
+        
+        **Campos requeridos:** dni, nombres, apellidos, cargoId
+        
+        **Campos opcionales:** distritoId, nivelModalidad, institucionEducativaId
+        
+        **Validación cruzada:** Si proporciona tanto `nivelModalidad` como `institucionEducativaId`,
+        el `nivelModalidad` del personal DEBE coincidir con el `nivelModalidad` de la institución educativa.
+        
+        **Sobrescritura de distrito:** Si proporciona `institucionEducativaId`, el distrito del personal
+        será automáticamente sobrescrito por el distrito asociado a esa institución educativa (si existe).
+        Esto es útil para garantizar que el personal está asignado al correcto distrito según su institución.
       requestBody:
         required: true
         content:
@@ -708,6 +1036,22 @@ paths:
                   type: integer
                   description: ID del cargo existente en la tabla cargos
                   example: 2
+                distritoId:
+                  type: integer
+                  nullable: true
+                  description: (Opcional) ID del distrito existente en la tabla distritos
+                  example: 1
+                nivelModalidad:
+                  type: string
+                  nullable: true
+                  enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
+                  description: (Opcional) Nivel/modalidad. Si se proporciona institucionEducativaId, debe coincidir con su nivelModalidad
+                  example: "PRIMARIA"
+                institucionEducativaId:
+                  type: integer
+                  nullable: true
+                  description: (Opcional) ID de la institución educativa. Su nivelModalidad debe coincidir con el del personal
+                  example: 2
       responses:
         '201':
           description: Personal registrado exitosamente con QR generado
@@ -723,12 +1067,17 @@ paths:
                     type: string
                     example: "Personal María García López con ID 5 creado exitosamente"
                   personal:
-                    type: object
-                    properties:
-                      personalConCargo:
-                        $ref: '#/components/schemas/Personal'
+                    $ref: '#/components/schemas/Personal'
         '400':
-          description: Faltan campos, DNI duplicado, DNI inválido o cargo inexistente
+          description: |
+            Validación fallida. Posibles errores:
+            - Faltan campos requeridos (dni, nombres, apellidos, cargoId)
+            - DNI duplicado
+            - DNI inválido (debe tener 8 dígitos)
+            - Cargo inexistente
+            - Distrito inexistente
+            - Institución educativa inexistente
+            - Mismatch: nivelModalidad no coincide con el de la institucionEducativa
           content:
             application/json:
               schema:
@@ -819,8 +1168,14 @@ paths:
       tags: [Personal]
       summary: Actualizar datos de un empleado
       description: |
-        Actualiza los datos del personal. Si se cambia el `cargoId`, el DNI,
-        o algún dato relevante, el código QR se regenera automáticamente.
+        Actualiza los datos del personal. Si se cambia el `cargoId`, `distritoId`,
+        el DNI o algún dato relevante, el código QR se regenera automáticamente.
+        
+        **Validación cruzada:** Si proporciona tanto `nivelModalidad` como `institucionEducativaId`,
+        el `nivelModalidad` del personal DEBE coincidir con el `nivelModalidad` de la institución educativa.
+        
+        **Sobrescritura de distrito:** Si proporciona `institucionEducativaId`, el distrito del personal
+        será automáticamente sobrescrito por el distrito asociado a esa institución educativa (si existe).
       parameters:
         - in: path
           name: id
@@ -848,6 +1203,21 @@ paths:
                 cargoId:
                   type: integer
                   example: 3
+                distritoId:
+                  type: integer
+                  nullable: true
+                  example: 2
+                nivelModalidad:
+                  type: string
+                  nullable: true
+                  enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
+                  description: Nivel/modalidad. Si se proporciona institucionEducativaId, debe coincidir con su nivelModalidad
+                  example: "PRIMARIA"
+                institucionEducativaId:
+                  type: integer
+                  nullable: true
+                  description: ID de la institución educativa. Su nivelModalidad debe coincidir con el del personal
+                  example: 2
       responses:
         '200':
           description: Personal actualizado (QR regenerado si aplica)
@@ -864,7 +1234,14 @@ paths:
                   personal:
                     $ref: '#/components/schemas/Personal'
         '400':
-          description: DNI duplicado, DNI inválido o cargo inexistente
+          description: |
+            Validación fallida. Posibles errores:
+            - DNI duplicado (en otro registro)
+            - DNI inválido (debe tener 8 dígitos)
+            - Cargo inexistente
+            - Distrito inexistente
+            - Institución educativa inexistente
+            - Mismatch: nivelModalidad no coincide con el de la institucionEducativa
           content:
             application/json:
               schema:
@@ -1014,6 +1391,9 @@ paths:
         | Registro del día completo | Crea nueva ENTRADA (horario extendido) |
 
         `horasTrabajadas` se calcula como la diferencia entre `horaEntrada` y `horaSalida` en formato **HH:MM**.
+        
+        **Auditoría:** El usuario autenticado que realiza el registro (entrada/salida) será guardado en los campos
+        `usuarioId` y `usuarioNombre` para crear un rastro de quién registró la asistencia.
       security:
         - bearerAuth: []
       requestBody:
@@ -1131,8 +1511,8 @@ paths:
         - Personal específico (`personalId`)
         - Paginación (`pagina`, `limite`)
         
-        Los resultados incluyen datos completos del personal y su cargo.
-        Ordenados por fecha descendente.
+        Los resultados incluyen datos completos del personal (cargo, distrito, nivel/modalidad,
+        institución educativa si aplica). Ordenados por fecha descendente.
       security:
         - bearerAuth: []
       parameters:
@@ -1194,4 +1574,266 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RespuestaError'
-  
+
+  # ─────────────────────────────────────────────────────────────
+  # INSTITUCIONES EDUCATIVAS
+  # ─────────────────────────────────────────────────────────────
+  /institucionesEducativas:
+    post:
+      tags: [Instituciones Educativas]
+      summary: Crear una nueva institución educativa
+      description: |
+        Registra una nueva institución educativa en el sistema.
+        El `codigoModular` debe ser único.
+        
+        **Campos requeridos:** codigoModular, nombreIE, nivelModalidad, distritoId
+        
+        Cuando se asigna un `distritoId` a una institución educativa,
+        todos los personal que usen esta institución heredarán automáticamente
+        su distrito (sobrescribiendo cualquier distrito seleccionado previamente).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [codigoModular, nombreIE, nivelModalidad, distritoId]
+              properties:
+                codigoModular:
+                  type: string
+                  description: Código modular único de la institución
+                  example: "0281774"
+                nombreIE:
+                  type: string
+                  description: Nombre oficial de la institución educativa
+                  example: "22226 NUESTRA SEÑORA DE FATIMA"
+                nivelModalidad:
+                  type: string
+                  enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
+                  description: Nivel/modalidad educativa
+                  example: "PRIMARIA"
+                distritoId:
+                  type: integer
+                  description: ID del distrito donde está ubicada la institución. El personal heredará automáticamente este distrito
+                  example: 1
+      responses:
+        '201':
+          description: Institución educativa creada exitosamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaExito'
+                  - type: object
+                    properties:
+                      institucionEducativa:
+                        $ref: '#/components/schemas/InstitucionEducativa'
+        '400':
+          description: |
+            Validación fallida. Posibles errores:
+            - Faltan campos requeridos (codigoModular, nombreIE, nivelModalidad, distritoId)
+            - Código modular duplicado
+            - Nivel/modalidad inválido
+            - Distrito inexistente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    get:
+      tags: [Instituciones Educativas]
+      summary: Obtener lista de instituciones educativas
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: estado
+          schema:
+            type: boolean
+          description: Filtrar por estado activo/inactivo
+          example: true
+        - in: query
+          name: nivelModalidad
+          schema:
+            type: string
+            enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
+          description: Filtrar por nivel/modalidad
+          example: "PRIMARIA"
+      responses:
+        '200':
+          description: Lista de instituciones educativas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  institucionesEducativas:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InstitucionEducativa'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /institucionesEducativas/{id}:
+    put:
+      tags: [Instituciones Educativas]
+      summary: Actualizar una institución educativa
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID de la institución educativa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                codigoModular:
+                  type: string
+                  example: "0281775"
+                nombreIE:
+                  type: string
+                  example: "22227 SAN JOSÉ"
+                nivelModalidad:
+                  type: string
+                  enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
+                  example: "SECUNDARIA"
+                distritoId:
+                  type: integer
+                  nullable: true
+                  description: ID del distrito donde está ubicada la institución. El personal heredará este distrito automáticamente
+                  example: 2
+                estado:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Institución educativa actualizada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaExito'
+                  - type: object
+                    properties:
+                      institucionEducativa:
+                        $ref: '#/components/schemas/InstitucionEducativa'
+        '400':
+          description: Código modular duplicado o nivelModalidad inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Institución educativa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    patch:
+      tags: [Instituciones Educativas]
+      summary: Cambiar estado de una institución educativa
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID de la institución educativa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado:
+                  type: boolean
+                  example: false
+      responses:
+        '200':
+          description: Estado de la institución educativa cambiado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaExito'
+                  - type: object
+                    properties:
+                      institucionEducativa:
+                        $ref: '#/components/schemas/InstitucionEducativa'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Institución educativa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    delete:
+      tags: [Instituciones Educativas]
+      summary: Desactivar una institución educativa
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID de la institución educativa
+      responses:
+        '200':
+          description: Institución educativa desactivada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaExito'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Institución educativa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'

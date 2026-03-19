@@ -1,5 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Personal } from "./personalModel";
+import { Usuario } from "./usuariosModel";
 
 @Entity('asistencia')
 export class Asistencia extends BaseEntity {
@@ -27,6 +28,21 @@ export class Asistencia extends BaseEntity {
 
     @Column({ default: 'EN_CURSO' }) // EN_CURSO, COMPLETO
     estado: string;
+
+    // ✅ AUDITORÍA: Quién registró esta asistencia
+    // ENTRADA
+    @Column({ nullable: true })
+    usuarioIdEntrada: number;
+
+    @Column({ nullable: true })
+    usuarioNombreEntrada: string;
+
+    // SALIDA
+    @Column({ nullable: true })
+    usuarioIdSalida: number;
+
+    @Column({ nullable: true })
+    usuarioNombreSalida: string;
 
     @CreateDateColumn()
     createdat: Date;
