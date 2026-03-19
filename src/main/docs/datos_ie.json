@@ -1,0 +1,1612 @@
+[
+  {
+    "codigo": "0714055",
+    "nombre": "252",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0679720",
+    "nombre": "ALEJANDRO HERNANDEZ BONILLA",
+    "nivel": "EBA-CEPTPRO",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0278937",
+    "nombre": "256",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0275701",
+    "nombre": "NUESTRA SEÑORA DEL CARMEN",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0752246",
+    "nombre": "403",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1425834",
+    "nombre": "22771 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0608703",
+    "nombre": "22599 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0543058",
+    "nombre": "22573",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0291740",
+    "nombre": "22760 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0752261",
+    "nombre": "JOHN F. KENNEDY",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0276048",
+    "nombre": "ANDRES AVELINO CACERES (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0282012",
+    "nombre": "22250 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1064575",
+    "nombre": "22759 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0281816",
+    "nombre": "22230 ELADIO SARAVIA TASAYCO (P)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0282285",
+    "nombre": "22277",
+    "nivel": "PRIMARIA",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "1425156",
+    "nombre": "22766 LUIS LORENZO CANEPA PACHAS (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0679589",
+    "nombre": "22257 (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 7,
+    "distrito_nombre": "San Juan de Yanac"
+  },
+  {
+    "codigo": "1610963",
+    "nombre": "439",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1716398",
+    "nombre": "709",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "1062678",
+    "nombre": "407",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0543157",
+    "nombre": "22576 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0281931",
+    "nombre": "22242 JOAQUIN ORMEÑO CABRERA",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1731926",
+    "nombre": "22851",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1773746",
+    "nombre": "22268 (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0275875",
+    "nombre": "CHINCHA (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0282061",
+    "nombre": "22255 ROLANDO ALZAMORA PAREDES (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0278929",
+    "nombre": "255 NIÑO JESUS DE PRAGA",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0714113",
+    "nombre": "22655 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1063841",
+    "nombre": "JUAN VELASCO ALVARADO (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0581165",
+    "nombre": "MIGUEL GRAU SEMINARIO (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 11,
+    "distrito_nombre": "Tambo de Mora"
+  },
+  {
+    "codigo": "0714410",
+    "nombre": "FE Y ALEGRIA 30 (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "1405323",
+    "nombre": "SAN PEDRO (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1610880",
+    "nombre": "436",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1062769",
+    "nombre": "421",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0281857",
+    "nombre": "22234 SANTIAGO CALLE SANTOS (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0468108",
+    "nombre": "22520",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0679209",
+    "nombre": "240",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1678036",
+    "nombre": "704",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0563254",
+    "nombre": "22260 JOSE DE SAN MARTIN (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "1560606",
+    "nombre": "22237 AURELIO MOISES FLORES GONZALES (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0608976",
+    "nombre": "PEDRO RONCEROS CALDERON (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0292474",
+    "nombre": "PARROQUIAL SAN JOSE (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0630541",
+    "nombre": "235",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0282277",
+    "nombre": "22276",
+    "nivel": "PRIMARIA",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "1744747",
+    "nombre": "711",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0282442",
+    "nombre": "23001 SEBASTIAN BARRANCA (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0282335",
+    "nombre": "22282",
+    "nivel": "PRIMARIA",
+    "distrito_id": 7,
+    "distrito_nombre": "San Juan de Yanac"
+  },
+  {
+    "codigo": "0292516",
+    "nombre": "22531 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0679597",
+    "nombre": "22258 SAN ANTONIO DE LISCAY (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1408251",
+    "nombre": "22776",
+    "nivel": "PRIMARIA",
+    "distrito_id": 7,
+    "distrito_nombre": "San Juan de Yanac"
+  },
+  {
+    "codigo": "0278895",
+    "nombre": "243 ESPERANZA CARRILLO DE PESCHIERA",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0784736",
+    "nombre": "22679",
+    "nivel": "PRIMARIA",
+    "distrito_id": 7,
+    "distrito_nombre": "San Juan de Yanac"
+  },
+  {
+    "codigo": "0608992",
+    "nombre": "GREGORIO CONDE",
+    "nivel": "EBA-CEPTPRO",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0714170",
+    "nombre": "22659",
+    "nivel": "PRIMARIA",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "0281881",
+    "nombre": "22237 AURELIO MOISES FLORES GONZALES (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1062876",
+    "nombre": "432",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0281972",
+    "nombre": "22246",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0281840",
+    "nombre": "22233 PAULINO REATEGUI AGUILAR (P)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0291849",
+    "nombre": "22758",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0291765",
+    "nombre": "22761",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "3002730",
+    "nombre": "22605 (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0784744",
+    "nombre": "22678 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0282129",
+    "nombre": "22261 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "1611003",
+    "nombre": "441",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0275461",
+    "nombre": "PROCERES DE LA INDEPENDENCIA (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1064120",
+    "nombre": "TUPAC AMARU (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1611508",
+    "nombre": "445",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1392760",
+    "nombre": "22234 SANTIAGO CALLE SANTOS (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0282434",
+    "nombre": "22492",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0608968",
+    "nombre": "22613",
+    "nivel": "PRIMARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "1752724",
+    "nombre": "SINFONICA MODULO CHINCHA",
+    "nivel": "EBA-CEPTPRO",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0679605",
+    "nombre": "22259 APOSTOL SAN PEDRO (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1695501",
+    "nombre": "440",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0276212",
+    "nombre": "MANUEL CORPUS DE LA CRUZ",
+    "nivel": "EBA-CEPTPRO",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1219542",
+    "nombre": "22754 (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1731918",
+    "nombre": "PRITE ANGELITOS DE JESUS",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0281873",
+    "nombre": "22236 MAGDALENA BARBETTA AGUILAR (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1062801",
+    "nombre": "22685 (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1425784",
+    "nombre": "22770",
+    "nivel": "PRIMARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0282152",
+    "nombre": "22264 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0630608",
+    "nombre": "230",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0636753",
+    "nombre": "22627",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0752295",
+    "nombre": "22264 (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0291823",
+    "nombre": "23516",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1062710",
+    "nombre": "411",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1425305",
+    "nombre": "RUBEN MARTINEZ PUICON",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "1062843",
+    "nombre": "429",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1755602",
+    "nombre": "VIRGEN DE FATIMA",
+    "nivel": "EBA-CEPTPRO",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0282251",
+    "nombre": "22274",
+    "nivel": "PRIMARIA",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "0564294",
+    "nombre": "22579 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1063791",
+    "nombre": "22753",
+    "nivel": "PRIMARIA",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "0630699",
+    "nombre": "234",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0630657",
+    "nombre": "233",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 11,
+    "distrito_nombre": "Tambo de Mora"
+  },
+  {
+    "codigo": "0630632",
+    "nombre": "232",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1425867",
+    "nombre": "435",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1678028",
+    "nombre": "703",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0282137",
+    "nombre": "22262 SERGIO BAUTISTA QUISPE (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0630624",
+    "nombre": "231",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1678069",
+    "nombre": "707",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0282293",
+    "nombre": "22278 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0275453",
+    "nombre": "JOSE PARDO Y BARREDA (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1063130",
+    "nombre": "23001 SEBASTIAN BARRANCA (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0292482",
+    "nombre": "SANTA ROSA",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0564609",
+    "nombre": "22578",
+    "nivel": "PRIMARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "0636837",
+    "nombre": "22636",
+    "nivel": "PRIMARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "1357813",
+    "nombre": "22772 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "3026424",
+    "nombre": "22779",
+    "nivel": "PRIMARIA",
+    "distrito_id": 11,
+    "distrito_nombre": "Tambo de Mora"
+  },
+  {
+    "codigo": "1063684",
+    "nombre": "22683",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0636662",
+    "nombre": "22628",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1063775",
+    "nombre": "22752 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0630566",
+    "nombre": "22228 (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0714212",
+    "nombre": "22662",
+    "nivel": "PRIMARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1062728",
+    "nombre": "412",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0679233",
+    "nombre": "245",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0278911",
+    "nombre": "254",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 11,
+    "distrito_nombre": "Tambo de Mora"
+  },
+  {
+    "codigo": "0291955",
+    "nombre": "22756",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0679399",
+    "nombre": "22645",
+    "nivel": "PRIMARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "0509489",
+    "nombre": "223",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0282350",
+    "nombre": "22284",
+    "nivel": "PRIMARIA",
+    "distrito_id": 7,
+    "distrito_nombre": "San Juan de Yanac"
+  },
+  {
+    "codigo": "1696814",
+    "nombre": "SATELITE PRIMAVERAL",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "1695519",
+    "nombre": "259 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1365774",
+    "nombre": "JUAN PABLO FUENTES HUAMAN",
+    "nivel": "EBA-CEPTPRO",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1631159",
+    "nombre": "22774 (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0278945",
+    "nombre": "257",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0282228",
+    "nombre": "22271",
+    "nivel": "PRIMARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "1363340",
+    "nombre": "22773 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "1357839",
+    "nombre": "22281 (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0282327",
+    "nombre": "22281 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1610898",
+    "nombre": "437",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "1062694",
+    "nombre": "410",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "1064179",
+    "nombre": "SAN AGUSTIN (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1678044",
+    "nombre": "705",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0282236",
+    "nombre": "22272",
+    "nivel": "PRIMARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "1457431",
+    "nombre": "TONY GUBBELS",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0554527",
+    "nombre": "22528 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0275792",
+    "nombre": "REINA DEL SANTISIMO ROSARIO (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1678051",
+    "nombre": "706",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1062686",
+    "nombre": "408",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0538298",
+    "nombre": "224",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "1064161",
+    "nombre": "SAN ANTONIO (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0282418",
+    "nombre": "22290",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0282004",
+    "nombre": "22249",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0714006",
+    "nombre": "253",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0467928",
+    "nombre": "222",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1063767",
+    "nombre": "22751",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0630574",
+    "nombre": "239",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0679266",
+    "nombre": "248",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0281980",
+    "nombre": "22247 JUAN XXIII",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1063197",
+    "nombre": "ANDRES AVELINO CACERES (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1063114",
+    "nombre": "448",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1378868",
+    "nombre": "22252 ANSELMO ABAD DE LA CRUZ (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1063007",
+    "nombre": "447",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "0282046",
+    "nombre": "22253 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0291831",
+    "nombre": "22757 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0868166",
+    "nombre": "22685 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1219666",
+    "nombre": "SANTA CECILIA (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "3046596",
+    "nombre": "22803 SEÑOR DE LOS MILAGROS",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0528471",
+    "nombre": "22565",
+    "nivel": "PRIMARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0282178",
+    "nombre": "22266 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "1388941",
+    "nombre": "22240 FRANCISCO CORBETTO ROCCA (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1678010",
+    "nombre": "702",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0275933",
+    "nombre": "SANTA ANA",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1695485",
+    "nombre": "306 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0281949",
+    "nombre": "22243 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0714147",
+    "nombre": "22657 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1064112",
+    "nombre": "22286 SAN VICENTE DE PAUL (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "0608307",
+    "nombre": "PEDRO RONCEROS CALDERON (t)",
+    "nivel": "EBA-CEPTPRO",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0528778",
+    "nombre": "22564",
+    "nivel": "PRIMARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1657857",
+    "nombre": "701",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1063734",
+    "nombre": "22687 ALMIRANTE MIGUEL GRAU (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0282079",
+    "nombre": "22256 SAN ANTONIO DE PADUA (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0282319",
+    "nombre": "22280 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0275537",
+    "nombre": "CHINCHAYSUYO (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0564302",
+    "nombre": "22580",
+    "nivel": "PRIMARIA",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "0752311",
+    "nombre": "22665",
+    "nivel": "PRIMARIA",
+    "distrito_id": 7,
+    "distrito_nombre": "San Juan de Yanac"
+  },
+  {
+    "codigo": "1062850",
+    "nombre": "431",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0282186",
+    "nombre": "22267",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "1425891",
+    "nombre": "22247",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0282301",
+    "nombre": "22279",
+    "nivel": "PRIMARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "1744754",
+    "nombre": "712",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0679217",
+    "nombre": "241",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0282400",
+    "nombre": "22289",
+    "nivel": "PRIMARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1357805",
+    "nombre": "22772 (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0278903",
+    "nombre": "244",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0276089",
+    "nombre": "JOHN F. KENNEDY",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0608240",
+    "nombre": "22230 ELADIO SARAVIA TASAYCO (I)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0608265",
+    "nombre": "22603",
+    "nivel": "PRIMARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "1064195",
+    "nombre": "DOS DE MAYO (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0713990",
+    "nombre": "249",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "1064153",
+    "nombre": "JOSE YATACO PACHAS (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0608950",
+    "nombre": "22598",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0714097",
+    "nombre": "22654 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0538595",
+    "nombre": "225 EMILIA BARCIA BONIFFATTI",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0281915",
+    "nombre": "22240 FRANCISCO CORBETTO ROCCA (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0679654",
+    "nombre": "HORACIO ZEBALLOS GAMEZ (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0282384",
+    "nombre": "22287",
+    "nivel": "PRIMARIA",
+    "distrito_id": 8,
+    "distrito_nombre": "San Pedro de Huacarpana"
+  },
+  {
+    "codigo": "0282426",
+    "nombre": "22480 JOSE CARLOS MARIATEGUI (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0468090",
+    "nombre": "22519 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0553909",
+    "nombre": "CIRO ALEGRIA",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0275677",
+    "nombre": "9 DE DICIEMBRE",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0282160",
+    "nombre": "22265 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "0679258",
+    "nombre": "247",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0282269",
+    "nombre": "22275",
+    "nivel": "PRIMARIA",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "0275693",
+    "nombre": "SIMON BOLIVAR",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 4,
+    "distrito_nombre": "Sunampe"
+  },
+  {
+    "codigo": "1716380",
+    "nombre": "708",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "1062637",
+    "nombre": "404",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1610922",
+    "nombre": "438",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "0281907",
+    "nombre": "ANDRES AVELINO CACERES (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1062736",
+    "nombre": "417",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "0281774",
+    "nombre": "22226 NUESTRA SEÑORA DE FATIMA",
+    "nivel": "PRIMARIA",
+    "distrito_id": 3,
+    "distrito_nombre": "Alto Laran"
+  },
+  {
+    "codigo": "1664531",
+    "nombre": "22752 (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0714030",
+    "nombre": "251",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1254978",
+    "nombre": "SANTA TERESITA DEL NIÑO JESUS (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "1063049",
+    "nombre": "22480 JOSE CARLOS MARIATEGUI (i)",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 2,
+    "distrito_nombre": "Pueblo Nuevo"
+  },
+  {
+    "codigo": "1744739",
+    "nombre": "710",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0636696",
+    "nombre": "22635",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0275685",
+    "nombre": "MELCHORITA SARAVIA (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1064203",
+    "nombre": "ABRAHAM VALDELOMAR PINTO (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0282038",
+    "nombre": "22252 ANSELMO ABAD DE LA CRUZ (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0278952",
+    "nombre": "221",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "1359488",
+    "nombre": "ANDRES AVELINO CACERES",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0553800",
+    "nombre": "JUAN C. DE MORA",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 10,
+    "distrito_nombre": "Chincha Baja"
+  },
+  {
+    "codigo": "0714154",
+    "nombre": "22658",
+    "nivel": "PRIMARIA",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "1611078",
+    "nombre": "442",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 6,
+    "distrito_nombre": "El Carmen"
+  },
+  {
+    "codigo": "0752238",
+    "nombre": "260",
+    "nivel": "INICIAL-JARDIN",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0281899",
+    "nombre": "22238 SAN MARTIN DE PORRES (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0275529",
+    "nombre": "SANTA ANA",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 5,
+    "distrito_nombre": "Chincha Alta"
+  },
+  {
+    "codigo": "0282053",
+    "nombre": "22254 (p)",
+    "nivel": "PRIMARIA",
+    "distrito_id": 1,
+    "distrito_nombre": "Grocio Prado"
+  },
+  {
+    "codigo": "0679613",
+    "nombre": "22273 (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 9,
+    "distrito_nombre": "Chavin"
+  },
+  {
+    "codigo": "0752345",
+    "nombre": "22283 (s)",
+    "nivel": "SECUNDARIA",
+    "distrito_id": 7,
+    "distrito_nombre": "San Juan de Yanac"
+  }
+]

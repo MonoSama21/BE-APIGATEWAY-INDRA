@@ -36,6 +36,15 @@ class AsistenciaController {
         await ensureConnection();
         const { qrData } = req.body;
 
+        // ✅ OBTENER INFO DEL USUARIO AUTENTICADO PARA AUDITORÍA
+        const usuarioAutenticado = (req as any).usuario;
+        if (!usuarioAutenticado) {
+            return res.status(401).json({
+                success: false,
+                message: "Usuario no autenticado para registrar asistencia"
+            });
+        }
+
         if (!qrData) {
             return res.status(400).json({
                 success: false,
@@ -121,6 +130,9 @@ class AsistenciaController {
                 nuevaAsistencia.fecha = hoy;
                 nuevaAsistencia.horaEntrada = horaActual;
                 nuevaAsistencia.estado = 'EN_CURSO';
+                // ✅ AUDITORÍA: Registrar quién hizo la ENTRADA
+                nuevaAsistencia.usuarioIdEntrada = usuarioAutenticado.id;
+                nuevaAsistencia.usuarioNombreEntrada = usuarioAutenticado.nombre;
                 await nuevaAsistencia.save();
                 asistencia = nuevaAsistencia;
             } else {
@@ -133,6 +145,9 @@ class AsistenciaController {
                     horaActual
                 );
                 ultimoRegistro.estado = 'COMPLETO';
+                // ✅ AUDITORÍA: Registrar quién hizo la SALIDA
+                ultimoRegistro.usuarioIdSalida = usuarioAutenticado.id;
+                ultimoRegistro.usuarioNombreSalida = usuarioAutenticado.nombre;
                 await ultimoRegistro.save();
                 asistencia = ultimoRegistro;
             }
@@ -228,6 +243,8 @@ class AsistenciaController {
             let query = Asistencia.createQueryBuilder('asistencia')
                 .leftJoinAndSelect('asistencia.personal', 'personal')
                 .leftJoinAndSelect('personal.cargo', 'cargo')
+                .leftJoinAndSelect('personal.distrito', 'distrito')
+                .leftJoinAndSelect('personal.institucionEducativa', 'institucionEducativa')
                 .select([
                     'asistencia.id',
                     'asistencia.fecha',
@@ -239,7 +256,19 @@ class AsistenciaController {
                     'personal.dni',
                     'personal.nombres',
                     'personal.apellidos',
-                    'cargo.cargo'
+                    'personal.nivelModalidad',
+                    'cargo.cargo',
+                    'distrito.id',
+                    'distrito.distrito',
+                    'distrito.alias',
+                    'institucionEducativa.id',
+                    'institucionEducativa.codigoModular',
+                    'institucionEducativa.nombreIE',
+                    'institucionEducativa.nivelModalidad',
+                    'asistencia.usuarioIdEntrada',
+                    'asistencia.usuarioNombreEntrada',
+                    'asistencia.usuarioIdSalida',
+                    'asistencia.usuarioNombreSalida'
                 ])
                 .orderBy('asistencia.fecha', 'DESC')
                 .addOrderBy('asistencia.id', 'DESC')

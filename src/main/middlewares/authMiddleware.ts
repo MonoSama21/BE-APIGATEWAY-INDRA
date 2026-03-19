@@ -32,7 +32,12 @@ export async function verificarToken(req: Request, res: Response, next: NextFunc
         }
         
         // Guardar datos del usuario en el request para usar después
-        (req as any).usuario = { email: dataToken.email, rol: usuario.rol };
+        (req as any).usuario = { 
+            id: usuario.id,
+            email: dataToken.email, 
+            nombre: usuario.nombre,
+            rol: usuario.rol 
+        };
         console.log('✅ Token válido para:', dataToken.email, 'con rol:', usuario.rol);
         next();      
     } catch (error) {

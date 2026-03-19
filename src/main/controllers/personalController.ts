@@ -3,6 +3,8 @@ import { Personal } from "../models/personalModel";
 import QRCode from 'qrcode';
 import { ensureConnection } from '../helpers/dbHelper';
 import { Cargo } from "../models/cargosModel";
+import { Distrito } from "../models/distritosModel";
+import { InstitucionEducativa } from "../models/institucionesEducativasModel";
 
 class PersonalController {
 
@@ -25,17 +27,29 @@ class PersonalController {
         try {
             const [personal, total] = await Personal.createQueryBuilder('personal')
             .leftJoinAndSelect('personal.cargo', 'cargo')
+            .leftJoinAndSelect('personal.distrito', 'distrito')
+            .leftJoinAndSelect('personal.institucionEducativa', 'institucionEducativa')
             .select([
                 'personal.id',
                 'personal.dni',
                 'personal.nombres',
                 'personal.apellidos',
                 'personal.cargoId',
+                'personal.distritoId',
+                'personal.nivelModalidad',
+                'personal.institucionEducativaId',
                 'personal.codigoQR',
                 'personal.foto',
                 'personal.estado',
                 'cargo.id',
-                'cargo.cargo'  // Solo id y nombre del cargo
+                'cargo.cargo',
+                'distrito.id',
+                'distrito.distrito',
+                'distrito.alias',
+                'institucionEducativa.id',
+                'institucionEducativa.codigoModular',
+                'institucionEducativa.nombreIE',
+                'institucionEducativa.nivelModalidad'
             ])
             .where(where)
             .orderBy('personal.id', 'DESC')
@@ -68,18 +82,30 @@ class PersonalController {
         try {
             const personal = await Personal.createQueryBuilder('personal')
             .leftJoinAndSelect('personal.cargo', 'cargo')
+            .leftJoinAndSelect('personal.distrito', 'distrito')
+            .leftJoinAndSelect('personal.institucionEducativa', 'institucionEducativa')
             .select([
                 'personal.id',
                 'personal.dni',
                 'personal.nombres',
                 'personal.apellidos',
                 'personal.cargoId',
+                'personal.distritoId',
+                'personal.nivelModalidad',
+                'personal.institucionEducativaId',
                 'personal.codigoQR',
                 'personal.foto',
                 'personal.estado',
                 'cargo.id',
                 'cargo.cargo',
-                'cargo.descripcion'
+                'cargo.descripcion',
+                'distrito.id',
+                'distrito.distrito',
+                'distrito.alias',
+                'institucionEducativa.id',
+                'institucionEducativa.codigoModular',
+                'institucionEducativa.nombreIE',
+                'institucionEducativa.nivelModalidad'
             ])
             .where('personal.id = :id', { id: Number(id) })
             .getOne();
@@ -130,6 +156,52 @@ class PersonalController {
                 });
             }
 
+            // ✅ VALIDAR QUE EL DISTRITO EXISTA (si se proporciona)
+            if (req.body.distritoId) {
+                const distritoExiste = await Distrito.findOneBy({ id: req.body.distritoId });
+                if (!distritoExiste) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "El distrito especificado no existe"
+                    });
+                }
+            }
+
+            // ✅ VALIDAR NIVEL/MODALIDAD (si se proporciona)
+            if (req.body.nivelModalidad) {
+                const nivelesValidos = ['INICIAL-JARDIN', 'PRIMARIA', 'SECUNDARIA', 'EBA-CEPTPRO'];
+                if (!nivelesValidos.includes(req.body.nivelModalidad)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Nivel/Modalidad inválido. Debe ser uno de: ${nivelesValidos.join(', ')}`
+                    });
+                }
+            }
+
+            // ✅ VALIDAR QUE LA INSTITUCIÓN EDUCATIVA EXISTA (si se proporciona)
+            if (req.body.institucionEducativaId) {
+                const ieExiste = await InstitucionEducativa.findOneBy({ id: req.body.institucionEducativaId });
+                if (!ieExiste) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "La institución educativa especificada no existe"
+                    });
+                }
+
+                // ✅ VALIDAR COINCIDENCIA ENTRE nivelModalidad E institucionEducativaId
+                if (req.body.nivelModalidad && ieExiste.nivelModalidad !== req.body.nivelModalidad) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `El nivel/modalidad del personal (${req.body.nivelModalidad}) no coincide con el de la institución educativa (${ieExiste.nivelModalidad})`
+                    });
+                }
+
+                // ✅ SOBRESCRIBIR DISTRITO: si la institución tiene distrito, usarlo automáticamente
+                if (ieExiste.distritoId) {
+                    req.body.distritoId = ieExiste.distritoId;
+                }
+            }
+
             // VALIDACION DE DNI UNICO
             const dniExistente = await Personal.findOneBy({ dni: req.body.dni });
             if (dniExistente) {
@@ -172,18 +244,16 @@ class PersonalController {
             registro.codigoQR = qrBase64;
             await registro.save();
 
-            // ✅ Cargar la relación del cargo para la respuesta
-            const personalConCargo = await Personal.findOne({
+            // ✅ Cargar las relaciones para la respuesta
+            const personalConRelaciones = await Personal.findOne({
                 where: { id: registro.id },
-                relations: ['cargo']
+                relations: ['cargo', 'distrito', 'institucionEducativa']
             });
 
             res.status(201).json({
                 success: true,
                 message: `Personal ${registro.nombres} ${registro.apellidos} con ID ${registro.id} creado exitosamente`,
-                personal: {
-                    personalConCargo
-                }
+                personal: personalConRelaciones
             });
 
         } catch (error) {
@@ -211,7 +281,7 @@ class PersonalController {
                 });
             }
 
-            const { dni, nombres, apellidos, cargo } = req.body;
+            const { dni, nombres, apellidos } = req.body;
 
             // VALIDAR SI EL NUEVO DNI YA EXISTE EN OTRO REGISTRO
             if (dni && dni !== personal.dni) {
@@ -249,6 +319,57 @@ class PersonalController {
                 personal.cargoId = req.body.cargoId;
             }
 
+            // Si se proporciona distritoId, validar que exista
+            if (req.body.distritoId) {
+                const distritoExiste = await Distrito.findOneBy({ id: req.body.distritoId });
+                if (!distritoExiste) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "El distrito especificado no existe"
+                    });
+                }
+                personal.distritoId = req.body.distritoId;
+            }
+
+            // Si se proporciona nivelModalidad, validar que sea válido
+            if (req.body.nivelModalidad) {
+                const nivelesValidos = ['INICIAL-JARDIN', 'PRIMARIA', 'SECUNDARIA', 'EBA-CEPTPRO'];
+                if (!nivelesValidos.includes(req.body.nivelModalidad)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Nivel/Modalidad inválido. Debe ser uno de: ${nivelesValidos.join(', ')}`
+                    });
+                }
+                personal.nivelModalidad = req.body.nivelModalidad;
+            }
+
+            // Si se proporciona institucionEducativaId, validar que exista
+            if (req.body.institucionEducativaId) {
+                const ieExiste = await InstitucionEducativa.findOneBy({ id: req.body.institucionEducativaId });
+                if (!ieExiste) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "La institución educativa especificada no existe"
+                    });
+                }
+
+                // ✅ VALIDAR COINCIDENCIA ENTRE nivelModalidad E institucionEducativaId
+                const nivelModalidadActual = req.body.nivelModalidad || personal.nivelModalidad;
+                if (nivelModalidadActual && ieExiste.nivelModalidad !== nivelModalidadActual) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `El nivel/modalidad del personal (${nivelModalidadActual}) no coincide con el de la institución educativa (${ieExiste.nivelModalidad})`
+                    });
+                }
+
+                // ✅ SOBRESCRIBIR DISTRITO: si la institución tiene distrito, usarlo automáticamente
+                if (ieExiste.distritoId) {
+                    personal.distritoId = ieExiste.distritoId;
+                }
+
+                personal.institucionEducativaId = req.body.institucionEducativaId;
+            }
+
             // REGENERAR CÓDIGO QR si cambió algún dato
             if (dni || nombres || apellidos || req.body.cargoId) {
                 const dataQR = JSON.stringify({
@@ -269,10 +390,10 @@ class PersonalController {
 
             await personal.save();
 
-            // Recargar con la relación del cargo
+            // Recargar con las relaciones
             const personalActualizado = await Personal.findOne({
                 where: { id: personal.id },
-                relations: ['cargo']
+                relations: ['cargo', 'distrito', 'institucionEducativa']
             });
 
             res.status(200).json({ 

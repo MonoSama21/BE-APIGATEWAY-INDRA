@@ -3,6 +3,8 @@ import { DataSource } from 'typeorm';
 import { Usuario } from '../models/usuariosModel';
 import { Personal } from '../models/personalModel';
 import { Cargo } from '../models/cargosModel';
+import { Distrito } from '../models/distritosModel';
+import { InstitucionEducativa } from '../models/institucionesEducativasModel';
 import { Asistencia } from '../models/asistenciaModel';
 
 
@@ -13,7 +15,7 @@ export const AppDataSource = new DataSource({
     type: 'postgres',
     url: process.env.SUPABASE_URL || '',
     schema: SCHEMA,
-    entities: [Usuario, Personal, Cargo, Asistencia],
+    entities: [Usuario, Personal, Cargo, Distrito, InstitucionEducativa, Asistencia],
     logging: true,
     synchronize: false
 });
