@@ -21,7 +21,13 @@ export async function verificarToken(req: Request, res: Response, next: NextFunc
     }    
 
     try {
-        const dataToken = jwt.verify(token as string, process.env.JWT_TOKEN_SECRET as string) as TokenPayload;
+        const dataToken = jwt.verify(
+            token as string, 
+            process.env.JWT_TOKEN_SECRET as string,
+        {
+            clockTimestamp: Math.floor(Date.now() / 1000) // Asegura que la verificación de expiración se base en el tiempo actual
+        }
+        ) as TokenPayload;
         // Busca el usuario en la base de datos para obtener el rol
         const usuario = await Usuario.findOne({ where: { email: dataToken.email } });
         if (!usuario) {
