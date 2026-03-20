@@ -1,6 +1,6 @@
 import express from 'express';
 import personalController from '../controllers/personalController';
-import { uploadFotoPersonal, subirFotoPersonalCloudinary } from '../middlewares/uploadMiddleware';
+import { uploadFotoPersonal, subirFotoPersonalCloudinary, uploadCSV, parseCSVMiddleware, uploadExcel, parseExcelMiddleware } from '../middlewares/uploadMiddleware';
 import { verificarToken } from '../middlewares/authMiddleware';
 import { autorizarPorRol } from '../middlewares/rolMiddleware';
 
@@ -19,5 +19,11 @@ router.put("/:id/estado", verificarToken, autorizarPorRol(['Admin']), personalCo
 
 // ✅ Ruta para subir foto
 router.post("/:id/foto", uploadFotoPersonal, subirFotoPersonalCloudinary, verificarToken, autorizarPorRol(['Admin']), personalController.subirFoto);
+
+// ✅ Ruta para importar CSV masivo
+router.post('/importar-csv', uploadCSV, parseCSVMiddleware, verificarToken, autorizarPorRol(['Admin']), personalController.importarCSV);
+
+// ✅ Ruta para importar EXCEL masivo
+router.post('/importar-excel', uploadExcel, parseExcelMiddleware, verificarToken, autorizarPorRol(['Admin']), personalController.importarCSV);
 
 export default router;

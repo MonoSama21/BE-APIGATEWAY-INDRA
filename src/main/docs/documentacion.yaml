@@ -1372,6 +1372,117 @@ paths:
               schema:
                 $ref: '#/components/schemas/RespuestaError'
 
+  /personal/importar-csv:
+    post:
+      tags: [Personal]
+      summary: Importar múltiples personal desde archivo CSV
+      description: |
+        Carga masivamente personal desde un archivo CSV. Genera automáticamente
+        códigos QR para cada registro exitoso.
+        
+        **Formato CSV esperado:**
+        ```
+        dni,nombres,apellidos,cargoId,distritoId,nivelModalidad,institucionEducativaId,estado
+        12345678,Juan,Pérez,1,1,PRIMARIA,5,true
+        87654321,María,García,2,2,SECUNDARIA,10,true
+        ```
+        
+        **Campos obligatorios:** dni, nombres, apellidos, cargoId
+        
+        **Campos opcionales:** distritoId, nivelModalidad, institucionEducativaId, estado
+        
+        **Validaciones por cada fila:**
+        - DNI debe tener 8 dígitos y ser único
+        - cargoId debe existir en tabla `cargos`
+        - distritoId debe existir en tabla `distritos` (si se proporciona)
+        - nivelModalidad debe ser una de: INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO
+        - institucionEducativaId debe existir en tabla `institucionesEducativas` (si se proporciona)
+        - Si se proporciona institucionEducativaId, el nivelModalidad debe coincidir
+        
+        **Respuesta:** La respuesta incluye un resumen con total de registros,
+        éxitos, errores y detalles de cada fila procesada.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [csv]
+              properties:
+                csv:
+                  type: string
+                  format: binary
+                  description: Archivo CSV con personales a importar
+      responses:
+        '200':
+          description: Importación completada con resumen de resultados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Importación completada: 45 exitosos, 3 errores"
+                  resumen:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 48
+                      exitosos:
+                        type: integer
+                        example: 45
+                      errores:
+                        type: integer
+                        example: 3
+                  detalles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        fila:
+                          type: integer
+                          description: Número de fila en el CSV (comenzando desde 2)
+                          example: 2
+                        dni:
+                          type: string
+                          example: "12345678"
+                        estado:
+                          type: string
+                          example: "Insertado exitosamente"
+                        id:
+                          type: integer
+                          description: ID del personal creado (solo si fue exitoso)
+                          example: 123
+                        error:
+                          type: string
+                          description: Mensaje de error (solo si hubo error)
+                          example: "El DNI ya está registrado"
+        '400':
+          description: Archivo CSV inválido o vacío
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
   # ─────────────────────────────────────────────────────────────
   # ASISTENCIA
   # ─────────────────────────────────────────────────────────────
