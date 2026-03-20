@@ -189,12 +189,13 @@ class PersonalController {
                 }
 
                 // ✅ VALIDAR COINCIDENCIA ENTRE nivelModalidad E institucionEducativaId
-                if (req.body.nivelModalidad && ieExiste.nivelModalidad !== req.body.nivelModalidad) {
-                    return res.status(400).json({
-                        success: false,
-                        message: `El nivel/modalidad del personal (${req.body.nivelModalidad}) no coincide con el de la institución educativa (${ieExiste.nivelModalidad})`
-                    });
-                }
+                //if (req.body.nivelModalidad && ieExiste.nivelModalidad !== req.body.nivelModalidad) {
+                //    return res.status(400).json({
+                //        success: false,
+                //        message: `El nivel/modalidad del personal (${req.body.nivelModalidad}) no coincide con el de la institución educativa (${ieExiste.nivelModalidad})`
+                //    });
+                //}
+
 
                 // ✅ SOBRESCRIBIR DISTRITO: si la institución tiene distrito, usarlo automáticamente
                 if (ieExiste.distritoId) {
@@ -528,6 +529,212 @@ class PersonalController {
                 res.status(500).json({
                     success: false,
                     message: error.message
+                });
+            }
+        }
+    }
+
+    async importarCSV(req: Request, res: Response) {
+        // ✅ Asegurar conexión antes de importar
+        await ensureConnection();
+
+        try {
+            // Obtener datos de CSV o Excel (el middleware correspondiente los proporciona)
+            let datos = (req as any).csvData || (req as any).excelData;
+            
+            if (!datos || !Array.isArray(datos)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "No se proporcionó un archivo CSV o EXCEL válido"
+                });
+            }
+
+            const nivelesValidos = ['INICIAL-JARDIN', 'PRIMARIA', 'SECUNDARIA', 'EBA-CEPTPRO'];
+            const resultados = {
+                exitosos: 0,
+                errores: 0,
+                detalles: [] as any[]
+            };
+
+            // Procesar cada fila del CSV/EXCEL
+            for (let i = 0; i < datos.length; i++) {
+                const fila = datos[i];
+                const nroFila = i + 2; // +2 porque fila 1 es header y empieza en 0
+
+                try {
+                    // Validar campos obligatorios
+                    if (!fila.dni || !fila.nombres || !fila.apellidos || !fila.cargoId) {
+                        resultados.detalles.push({
+                            fila: nroFila,
+                            dni: fila.dni,
+                            error: "Faltan campos obligatorios (dni, nombres, apellidos, cargoId)"
+                        });
+                        resultados.errores++;
+                        continue;
+                    }
+
+                    // Validar formato de DNI
+                    if (!/^\d{8}$/.test(String(fila.dni).trim())) {
+                        resultados.detalles.push({
+                            fila: nroFila,
+                            dni: fila.dni,
+                            error: "El DNI debe tener 8 dígitos"
+                        });
+                        resultados.errores++;
+                        continue;
+                    }
+
+                    // Validar DNI único
+                    const dniExistente = await Personal.findOneBy({ dni: String(fila.dni).trim() });
+                    if (dniExistente) {
+                        resultados.detalles.push({
+                            fila: nroFila,
+                            dni: fila.dni,
+                            error: "El DNI ya está registrado"
+                        });
+                        resultados.errores++;
+                        continue;
+                    }
+
+                    // Validar que el cargo exista
+                    const cargoExiste = await Cargo.findOneBy({ id: Number(fila.cargoId) });
+                    if (!cargoExiste) {
+                        resultados.detalles.push({
+                            fila: nroFila,
+                            dni: fila.dni,
+                            error: `El cargoId ${fila.cargoId} no existe`
+                        });
+                        resultados.errores++;
+                        continue;
+                    }
+
+                    // Validar distrito si se proporciona
+                    if (fila.distritoId) {
+                        const distritoExiste = await Distrito.findOneBy({ id: Number(fila.distritoId) });
+                        if (!distritoExiste) {
+                            resultados.detalles.push({
+                                fila: nroFila,
+                                dni: fila.dni,
+                                error: `El distritoId ${fila.distritoId} no existe`
+                            });
+                            resultados.errores++;
+                            continue;
+                        }
+                    }
+
+                    // Validar nivel/modalidad si se proporciona
+                    if (fila.nivelModalidad && !nivelesValidos.includes(fila.nivelModalidad)) {
+                        resultados.detalles.push({
+                            fila: nroFila,
+                            dni: fila.dni,
+                            error: `Nivel/Modalidad inválido. Debe ser: ${nivelesValidos.join(', ')}`
+                        });
+                        resultados.errores++;
+                        continue;
+                    }
+
+                    // Validar institución educativa si se proporciona
+                    let ieExiste = null;
+                    if (fila.institucionEducativaId) {
+                        ieExiste = await InstitucionEducativa.findOneBy({ id: Number(fila.institucionEducativaId) });
+                        if (!ieExiste) {
+                            resultados.detalles.push({
+                                fila: nroFila,
+                                dni: fila.dni,
+                                error: `La institucionEducativaId ${fila.institucionEducativaId} no existe`
+                            });
+                            resultados.errores++;
+                            continue;
+                        }
+
+                        // ✅ Validación de nivel/modalidad comentada para permitir importación flexible
+                        // Los niveles pueden ajustarse después desde la interfaz
+                        // if (fila.nivelModalidad && ieExiste.nivelModalidad !== fila.nivelModalidad) {
+                        //     resultados.detalles.push({
+                        //         fila: nroFila,
+                        //         dni: fila.dni,
+                        //         error: `Nivel/Modalidad no coincide. Personal: ${fila.nivelModalidad}, IE: ${ieExiste.nivelModalidad}`
+                        //     });
+                        //     resultados.errores++;
+                        //     continue;
+                        // }
+                    }
+
+                    // Preparar datos para insertar
+                    const datosPersonal: any = {
+                        dni: String(fila.dni).trim(),
+                        nombres: String(fila.nombres).trim(),
+                        apellidos: String(fila.apellidos).trim(),
+                        cargoId: Number(fila.cargoId),
+                        estado: fila.estado !== undefined ? fila.estado === 'true' || fila.estado === true : true
+                    };
+
+                    if (fila.distritoId) datosPersonal.distritoId = Number(fila.distritoId);
+                    if (fila.nivelModalidad) datosPersonal.nivelModalidad = fila.nivelModalidad;
+                    if (fila.institucionEducativaId) datosPersonal.institucionEducativaId = Number(fila.institucionEducativaId);
+
+                    // Aplicar sobrescritura de distrito si existe IE
+                    if (ieExiste && ieExiste.distritoId) {
+                        datosPersonal.distritoId = ieExiste.distritoId;
+                    }
+
+                    // Crear el registro
+                    const registro = Personal.create(datosPersonal);
+                    await registro.save();
+
+                    // Generar QR
+                    const dataQR = JSON.stringify({
+                        id: registro.id,
+                        dni: registro.dni,
+                        nombres: registro.nombres,
+                        apellidos: registro.apellidos,
+                        cargoId: registro.cargoId
+                    });
+
+                    const qrBase64 = await QRCode.toDataURL(dataQR, {
+                        errorCorrectionLevel: 'H',
+                        type: 'image/png',
+                        margin: 1,
+                        width: 300
+                    });
+
+                    registro.codigoQR = qrBase64;
+                    await registro.save();
+
+                    resultados.exitosos++;
+                    resultados.detalles.push({
+                        fila: nroFila,
+                        dni: fila.dni,
+                        estado: "Insertado exitosamente",
+                        id: registro.id
+                    });
+
+                } catch (error) {
+                    resultados.errores++;
+                    resultados.detalles.push({
+                        fila: nroFila,
+                        dni: fila.dni,
+                        error: error instanceof Error ? error.message : "Error desconocido"
+                    });
+                }
+            }
+
+            res.status(200).json({
+                success: true,
+                message: `Importación completada: ${resultados.exitosos} exitosos, ${resultados.errores} errores`,
+                resumen: {
+                    total: datos.length,
+                    exitosos: resultados.exitosos,
+                    errores: resultados.errores
+                },
+                detalles: resultados.detalles
+            });
+
+        } catch (error) {
+            if (error instanceof Error) {
+                res.status(500).json({
+                    success: false,
+                    message: "Error al importar datos: " + error.message
                 });
             }
         }
