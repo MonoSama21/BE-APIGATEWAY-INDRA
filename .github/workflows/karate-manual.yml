@@ -197,7 +197,7 @@ jobs:
           > /tmp/scenarios_html.txt
           
           # Buscar el archivo JSON de Karate (para estadísticas globales)
-          JSON_FILE=$(find target -name "karate-summary-json.txt" | head -n 1)
+          JSON_FILE=$(find "$REPORT_DIR" -name "karate-summary-json.txt" | head -n 1)
           
           if [ -n "$JSON_FILE" ] && [ -f "$JSON_FILE" ]; then
             echo "📄 Usando archivo JSON de Karate: $JSON_FILE"
