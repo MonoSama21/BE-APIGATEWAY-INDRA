@@ -1,3 +1,4 @@
+@SIAQR
 Feature: POST /usuarios - Registrar un nuevo usuario del sistema
 
 Background:
@@ -24,9 +25,12 @@ Scenario: Validar que se puede registrar un nuevo usuario con rol ADMIN
     "email": "#(randomEmail)",
     "telefono": "#(randomTelefono)",
     "password": "123456",
-    "rol": "ADMIN"
+    "rol": "Admin"
   }
   """
   When method POST
   Then status 201
-  
+  #GUARDAR VALORES
+  * def usuarioId = response.id
+  * def usuarioEmail = randomEmail
+  * def usuarioPassword = "123456"  

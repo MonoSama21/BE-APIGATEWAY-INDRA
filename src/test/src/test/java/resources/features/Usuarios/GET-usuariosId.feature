@@ -1,5 +1,4 @@
-@SIAQR
-Feature: DELETE /usuarios/{id} - Eliminar un usuario por ID
+Feature: GET /usuarios/{id} - Obtener detalle de un usuario por ID
 
 Background:
   * url urlBase
@@ -11,9 +10,9 @@ Background:
   * def idUsuario = id.response.id
 
 
-@test5 @eliminar-usuario
-Scenario: Validar que se puede eliminar un usuario existente por ID
+@test5 @detalle-usuario
+Scenario: Validar que se puede obtener el detalle de un usuario existente por ID
   Given path idUsuario
-  When method DELETE
+  When method GET
   Then status 200
   

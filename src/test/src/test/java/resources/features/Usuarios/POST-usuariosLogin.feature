@@ -1,3 +1,4 @@
+@SIAQR
 Feature: POST /usuarios/login - Iniciar sesión y obtener token JWT
 
 Background:

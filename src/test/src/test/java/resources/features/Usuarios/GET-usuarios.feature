@@ -1,3 +1,4 @@
+@SIAQR
 Feature: GET /usuarios - Obtener lista de usuarios con paginación
 
 Background:

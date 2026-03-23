@@ -60,12 +60,12 @@ jobs:
           # Lunes a Viernes
           if [[ $(date +%u) -lt 6 ]]; then
             echo "tag=@dailyTests" >> $GITHUB_OUTPUT
-            echo "correo=2101010261@undc.edu.pe" >> $GITHUB_OUTPUT
+            echo "correo=2101010261@undc.edu.pe,apachas.csm@gmail.com" >> $GITHUB_OUTPUT
             echo "ambiente=QA" >> $GITHUB_OUTPUT
           else
             # Sábado y domingo
             echo "tag=@postLoginRolAuxiliar" >> $GITHUB_OUTPUT
-            echo "correo=2101010261@undc.edu.pe" >> $GITHUB_OUTPUT
+            echo "correo=2101010261@undc.edu.pe,apachas.csm@gmail.com" >> $GITHUB_OUTPUT
             echo "ambiente=QA" >> $GITHUB_OUTPUT
           fi
         fi
@@ -80,7 +80,7 @@ jobs:
         server_port: ${{ secrets.MAIL_PORT }}
         username: ${{ secrets.MAIL_USERNAME }}
         password: ${{ secrets.MAIL_PASSWORD }}
-        subject: "🔵 Pruebas iniciadas - Karate API Testing"
+        subject: "🔵 Pruebas Backend Iniciadas - SIAQR UGEL CHINCHA"
         to: ${{ steps.params.outputs.correo }}
         from: ${{ secrets.MAIL_USERNAME }}
         html_body: |
@@ -97,10 +97,11 @@ jobs:
                   <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
                     <!-- Header -->
                     <tr>
-                      <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 40px; text-align: center;">
-                        <img src="https://res.cloudinary.com/dvrsdqsl1/image/upload/v1764399269/Blue_Minimalist_Technology_Cube_Logo_1_x445ab.png" width="120" style="margin-bottom: 15px;">
-                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">🚀 Pruebas Iniciadas</h1>
-                        <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 14px;">Sistema de Testing Continuo - SIASIS</p>
+                       <td style="background: linear-gradient(135deg, #476ed8 0%, #4990e0 100%); padding: 30px 40px; text-align: center;">
+                        <img src="https://res.cloudinary.com/dvrsdqsl1/image/upload/v1772743039/logo_tyjt1t.png" width="300" style="margin-bottom: 15px;">
+
+                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">🚀 Pruebas Automatizadas Backend iniciadas para SIAQR UGEL CHINCHA </h1>
+                        <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 14px;">Sistema de Testing Continuo - DEVQORA</p>
                       </td>
                     </tr>
                     <!-- Content -->
@@ -148,9 +149,10 @@ jobs:
                     <!-- Footer -->
                     <tr>
                       <td style="background-color: #f8fafc; padding: 25px 40px; border-top: 1px solid #e2e8f0;">
+                        <img src="https://res.cloudinary.com/dvrsdqsl1/image/upload/v1764399269/Blue_Minimalist_Technology_Cube_Logo_1_x445ab.png" width="150" style="margin-bottom: 15px;">
                         <p style="color: #64748b; font-size: 13px; margin: 0; line-height: 1.6;">
-                          <strong style="color: #1e293b;">QA Automation SSr Yrvin Pachas</strong><br>
-                          Testing Continuo - ZeusTesting<br>
+                          <strong style="color: #1e293b;">QA Automation SemiSenior Yrvin Pachas</strong><br>
+                          Testing Continuo - ZeusTesting <br>
                           🤖 Mensaje automático del sistema de CI/CD
                         </p>
                       </td>
@@ -164,16 +166,19 @@ jobs:
 
     - name: 📦 Instalar dependencias Maven
       run: mvn clean install -DskipTests
+      working-directory: ./src/test
 
     - name: 🧪 Ejecutar pruebas Karate con tag
       id: run_tests
       run: |
         mvn test -Dkarate.options="--tags ${{ steps.params.outputs.tag }}" -Dkarate.env=${{ steps.params.outputs.ambiente }} || echo "resultado=$?" >> $GITHUB_OUTPUT
         echo "resultado=$?" >> $GITHUB_OUTPUT
+      working-directory: ./src/test
       continue-on-error: true
 
     - name: 📂 List target directory
       run: ls -R target
+      working-directory: ./src/test
 
     # =========================================================
     # 📊 EXTRAER RESULTADOS DEL REPORTE JSON DE KARATE
@@ -182,7 +187,7 @@ jobs:
       if: always()
       id: test_results
       run: |
-        REPORT_DIR="target/karate-reports"
+        REPORT_DIR="src/test/target/karate-reports"
         
         if [ -d "$REPORT_DIR" ]; then
           echo "📋 Generando estadísticas desde reportes Karate..."
@@ -321,7 +326,7 @@ jobs:
       if: always()
       with:
         name: karate-report
-        path: target/karate-reports/
+        path: src/test/target/karate-reports/
         retention-days: 14
 
     # =========================================================
@@ -333,8 +338,8 @@ jobs:
         mkdir -p gh-pages/reports/${{ github.run_number }}
         
         # Copiar reportes de Karate
-        if [ -d "target/karate-reports" ]; then
-          cp -r target/karate-reports/* gh-pages/reports/${{ github.run_number }}/
+        if [ -d "src/test/target/karate-reports" ]; then
+          cp -r src/test/target/karate-reports/* gh-pages/reports/${{ github.run_number }}/
           echo "✅ Reportes de Karate copiados"
         fi
         
@@ -350,8 +355,8 @@ jobs:
         EOF
         
         # Copiar test-launcher como index
-        if [ -f "test-launcher.html" ]; then
-          cp test-launcher.html gh-pages/index.html
+        if [ -f "src/test/test-launcher.html" ]; then
+          cp src/test/test-launcher.html gh-pages/index.html
           echo "✅ Plataforma configurada como página principal"
         fi
         
@@ -429,7 +434,7 @@ jobs:
         server_port: ${{ secrets.MAIL_PORT }}
         username: ${{ secrets.MAIL_USERNAME }}
         password: ${{ secrets.MAIL_PASSWORD }}
-        subject: "🟢 Pruebas finalizadas - Karate API Testing"
+        subject: "🟢 Pruebas BackeEnd finalizadas - SIAQR UGEL CHINCHA"
         to: ${{ steps.params.outputs.correo }}
         from: ${{ secrets.MAIL_USERNAME }}
         html_body: |
@@ -447,7 +452,7 @@ jobs:
                     <!-- Header -->
                     <tr>
                       <td style="background: ${{ steps.run_tests.outputs.resultado == '0' && 'linear-gradient(135deg, #10b981 0%, #059669 100%)' || 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' }}; padding: 30px 40px; text-align: center;">
-                        <img src="https://res.cloudinary.com/dvrsdqsl1/image/upload/v1764399269/Blue_Minimalist_Technology_Cube_Logo_1_x445ab.png" width="120" style="margin-bottom: 15px;">
+                        <img src="https://res.cloudinary.com/dvrsdqsl1/image/upload/v1772743039/logo_tyjt1t.png" width="300" style="margin-bottom: 15px;">
                         <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">
                           ${{ steps.run_tests.outputs.resultado == '0' && '✅ Pruebas Exitosas' || '❌ Pruebas con Fallos' }}
                         </h1>

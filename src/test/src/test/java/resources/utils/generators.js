@@ -67,7 +67,8 @@
         return {
             nombreRandom: faker.name().fullName(),
             emailRandom: faker.internet().emailAddress(),
-            telefonoRandom: faker.phoneNumber().cellPhone()
+            telefonoRandom: faker.phoneNumber().cellPhone(),
+            ocupacionRandom: faker.job().title()
         };
     }
 
