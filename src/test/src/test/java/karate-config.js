@@ -10,7 +10,7 @@ function fn() {
     },
     QA: {
       api: {
-        urlBase: ""
+        urlBase: "https://devqa-api-asistencia-qr-ugel.vercel.app"
       }
     }
   };
