@@ -127,6 +127,7 @@ class UsuariosController {
             await registro.save();
             res.status(201).json({
                 success: true,
+                id: registro.id,
                 message: `Usuario ${registro.nombre} con ID ${registro.id} creado exitosamente`,
             });
 

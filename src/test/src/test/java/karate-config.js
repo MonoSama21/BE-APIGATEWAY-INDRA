@@ -5,12 +5,12 @@ function fn() {
   var ENV = {
     DEV: {
       api: {
-        urlBase: "https://qadev-be-novios100-citas.vercel.app"
+        urlBase: "https://devqa-api-asistencia-qr-ugel.vercel.app"
       }
     },
     QA: {
       api: {
-        urlBase: "https://serverest.dev/"
+        urlBase: ""
       }
     }
   };
