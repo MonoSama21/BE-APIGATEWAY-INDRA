@@ -15,7 +15,7 @@ Background:
   * header Authorization = 'Bearer ' + token
 
 
-@test4
+@test4 @crear-usuario
 Scenario: Validar que se puede registrar un nuevo usuario con rol ADMIN
   And request
   """
@@ -29,3 +29,4 @@ Scenario: Validar que se puede registrar un nuevo usuario con rol ADMIN
   """
   When method POST
   Then status 201
+  
