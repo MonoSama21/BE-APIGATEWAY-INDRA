@@ -12,6 +12,7 @@ import { Registro } from '../models/registrosModel';
 // Selecciona el schema según el ambiente
 const SCHEMA = process.env.SUPABASE_SCHEMA || 'produccion'; // prod o desa
 
+
 export const AppDataSource = new DataSource({
     type: 'postgres',
     url: process.env.SUPABASE_URL || '',
