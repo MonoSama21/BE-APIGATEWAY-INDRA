@@ -6,6 +6,7 @@ import { Cargo } from '../models/cargosModel';
 import { Distrito } from '../models/distritosModel';
 import { InstitucionEducativa } from '../models/institucionesEducativasModel';
 import { Asistencia } from '../models/asistenciaModel';
+import { Registro } from '../models/registrosModel';
 
 
 // Selecciona el schema según el ambiente
@@ -15,8 +16,8 @@ export const AppDataSource = new DataSource({
     type: 'postgres',
     url: process.env.SUPABASE_URL || '',
     schema: SCHEMA,
-    entities: [Usuario, Personal, Cargo, Distrito, InstitucionEducativa, Asistencia],
+    entities: [Usuario, Personal, Cargo, Distrito, InstitucionEducativa, Asistencia, Registro],
     logging: true,
-    synchronize: false
+    synchronize: true
 });
 

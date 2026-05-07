@@ -7,6 +7,7 @@ import cargosRoutes from './routes/cargosRoutes';
 import distritosRoutes from './routes/distritosRoutes';
 import institucionesEducativasRoutes from './routes/institucionesEducativasRoutes';
 import asistenciaRoutes from './routes/asistenciaRoutes';
+import registrosRoutes from './routes/registrosRoutes';
 
 const app = express();
 
@@ -41,5 +42,6 @@ app.use('/cargos', cargosRoutes);
 app.use('/distritos', distritosRoutes);
 app.use('/institucioneseducativas', institucionesEducativasRoutes);
 app.use('/asistencia', asistenciaRoutes);
+app.use('/registros', registrosRoutes);
 
 export default app;

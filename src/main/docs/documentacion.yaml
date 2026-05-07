@@ -30,6 +30,8 @@ tags:
     description: Catálogo de instituciones educativas con niveles/modalidades
   - name: Asistencia
     description: Registro y consulta de asistencia mediante código QR
+  - name: Registros
+    description: "Gestión de registros de culminación de misiones (juego SSTMON)"
 
 components:
   securitySchemes:
@@ -323,6 +325,60 @@ components:
         createdat:
           type: string
           format: date-time
+
+    # ── Registros ──────────────────────────────────────────────
+    Registro:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombreCompleto:
+          type: string
+          description: Nombre completo del empleado que completó la misión
+          example: "Carlos Pérez"
+        dni:
+          type: string
+          description: DNI del empleado
+          example: "12345678"
+        cargo:
+          type: string
+          description: Cargo del empleado
+          example: "Supervisor"
+        missionId:
+          type: integer
+          description: ID de la misión (1=Trabajo en Altura, 2=Trabajos en Vía Pública, 3=Energías Peligrosas)
+          example: 1
+        missionName:
+          type: string
+          description: Nombre descriptivo de la misión
+          example: "TRABAJO EN ALTURA"
+        score:
+          type: integer
+          description: Número de respuestas correctas obtenidas
+          example: 9
+        total:
+          type: integer
+          description: Total de preguntas (normalmente 10)
+          example: 10
+        percentage:
+          type: integer
+          description: Porcentaje de respuestas correctas (0-100)
+          example: 90
+        approved:
+          type: boolean
+          description: Indicador si el empleado aprobó (score >= 8)
+          example: true
+        pokeball:
+          type: string
+          nullable: true
+          description: Color de la pokebola seleccionada (red, blue, yellow)
+          example: "red"
+        completedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora en que se completó la misión
+          example: "2026-05-05T14:30:00Z"
 
     # ── Respuestas genéricas ──────────────────────────────────
     RespuestaExito:
@@ -1944,6 +2000,203 @@ paths:
                 $ref: '#/components/schemas/RespuestaError'
         '404':
           description: Institución educativa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  # ─────────────────────────────────────────────────────────────
+  # REGISTROS
+  # ─────────────────────────────────────────────────────────────
+  /registros:
+    post:
+      tags: [Registros]
+      summary: Crear un registro de culminación de misión
+      description: |
+        Registra la culminación de una misión por parte de un empleado.
+        Este endpoint es llamado por el frontend después de que el empleado
+        completa el juego y obtiene su puntaje.
+
+        **Campos requeridos:** nombreCompleto, dni, cargo, missionId, score, total
+
+        **Campos opcionales:** missionName, percentage, approved, pokeball
+
+        El campo `percentage` se calcula automáticamente si no se proporciona.
+        El campo `approved` se determina por si score >= 8.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nombreCompleto, dni, cargo, missionId, score, total]
+              properties:
+                nombreCompleto:
+                  type: string
+                  description: Nombre completo del empleado
+                  example: "Carlos Pérez"
+                dni:
+                  type: string
+                  description: DNI del empleado (8 dígitos)
+                  example: "12345678"
+                cargo:
+                  type: string
+                  description: Cargo del empleado
+                  example: "Supervisor"
+                missionId:
+                  type: integer
+                  description: ID de la misión completada (1, 2 o 3)
+                  example: 1
+                missionName:
+                  type: string
+                  description: (Opcional) Nombre de la misión
+                  example: "TRABAJO EN ALTURA"
+                score:
+                  type: integer
+                  description: Número de preguntas respondidas correctamente
+                  example: 9
+                total:
+                  type: integer
+                  description: Total de preguntas (normalmente 10)
+                  example: 10
+                percentage:
+                  type: integer
+                  description: (Opcional) Porcentaje de aciertos
+                  example: 90
+                approved:
+                  type: boolean
+                  description: (Opcional) Si fue aprobado (score >= 8)
+                  example: true
+                pokeball:
+                  type: string
+                  description: (Opcional) Color de la pokebola seleccionada
+                  enum: [red, blue, yellow]
+                  example: "red"
+      responses:
+        '201':
+          description: Registro creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  registro:
+                    $ref: '#/components/schemas/Registro'
+        '400':
+          description: Faltan campos obligatorios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+    get:
+      tags: [Registros]
+      summary: Obtener lista de registros (solo administradores)
+      description: |
+        Lista todos los registros de empleados que completaron misiones.
+        Soporta paginación y filtrado por estado de aprobación.
+        **Requiere autenticación y rol de administrador.**
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            default: 1
+          description: Número de página
+        - in: query
+          name: limite
+          schema:
+            type: integer
+            default: 20
+          description: Resultados por página
+        - in: query
+          name: approved
+          schema:
+            type: boolean
+          description: Filtrar por estado de aprobación (true/false)
+          example: true
+      responses:
+        '200':
+          description: Lista paginada de registros
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/RespuestaPaginada'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Registro'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+
+  /registros/{id}:
+    get:
+      tags: [Registros]
+      summary: Obtener detalle de un registro
+      description: |
+        Obtiene los detalles completos de un registro específico por su ID.
+        **Requiere autenticación y rol de administrador.**
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID del registro
+          example: 1
+      responses:
+        '200':
+          description: Detalle del registro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  registro:
+                    $ref: '#/components/schemas/Registro'
+        '401':
+          description: Token no válido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '404':
+          description: Registro no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespuestaError'
+        '500':
+          description: Error interno del servidor
           content:
             application/json:
               schema:
