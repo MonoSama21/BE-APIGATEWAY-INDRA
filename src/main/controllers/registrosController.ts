@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Registro } from '../models/registrosModel';
 import { ensureConnection } from '../helpers/dbHelper';
 
+
 class RegistrosController {
     async crear(req: Request, res: Response) {
         await ensureConnection();
