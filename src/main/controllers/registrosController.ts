@@ -15,7 +15,8 @@ class RegistrosController {
                 missionName,
                 score,
                 total,
-                pokeball
+                pokeball,
+                answers
             } = req.body;
 
             // Validaciones: campos obligatorios
@@ -47,7 +48,8 @@ class RegistrosController {
                 total: totalNum,
                 percentage: calculatedPercentage,
                 approved: isApproved,
-                pokeball: pokeball?.trim() || null
+                pokeball: pokeball?.trim() || null,
+                answers: answers && Array.isArray(answers) ? answers : null
             });
 
             await registro.save();
@@ -66,6 +68,7 @@ class RegistrosController {
                     percentage: registro.percentage,
                     approved: registro.approved,
                     pokeball: registro.pokeball,
+                    answers: registro.answers,
                     completedAt: registro.completedAt
                 }
             });
@@ -96,7 +99,24 @@ class RegistrosController {
                 take
             });
 
-            return res.status(200).json({ success: true, items, total, pagina: page, limite: take });
+            // Mapear respuesta para asegurar que `answers` se incluye correctamente
+            const itemsFormatted = items.map(item => ({
+                id: item.id,
+                nombreCompleto: item.nombreCompleto,
+                dni: item.dni,
+                cargo: item.cargo,
+                missionId: item.missionId,
+                missionName: item.missionName,
+                score: item.score,
+                total: item.total,
+                percentage: item.percentage,
+                approved: item.approved,
+                pokeball: item.pokeball,
+                answers: item.answers || [],
+                completedAt: item.completedAt
+            }));
+
+            return res.status(200).json({ success: true, items: itemsFormatted, total, pagina: page, limite: take });
         } catch (error) {
             console.error('Error listando registros:', error);
             return res.status(500).json({ success: false, message: 'Error listando registros' });
