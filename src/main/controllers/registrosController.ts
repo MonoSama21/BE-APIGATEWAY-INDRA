@@ -35,8 +35,8 @@ class RegistrosController {
             // Calcular porcentaje automáticamente
             const calculatedPercentage = Math.round((scoreNum / totalNum) * 100);
 
-            // Determinar si está aprobado (score >= 8)
-            const isApproved = scoreNum >= 8;
+            // Determinar si está aprobado (score >= 12)
+            const isApproved = scoreNum >= 12;
 
             const registro = Registro.create({
                 nombreCompleto: nombreCompleto.trim(),
