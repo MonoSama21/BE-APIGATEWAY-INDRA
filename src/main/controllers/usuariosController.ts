@@ -56,35 +56,6 @@ class UsuariosController {
         }
     }
 
-    async consultarDetalle(req: Request, res: Response) {
-        const { id } = req.params;
-        // ✅ Asegurar conexión antes de consultar
-        await ensureConnection();
-        try {
-            const usuario = await Usuario.findOne({
-                where: { id: Number(id) },
-                select: ["id", "nombre", "email", "telefono", "rol", "estado"]
-            });
-            if (!usuario) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Usuario no encontrado"
-                });
-            }
-            res.status(200).json({
-                success: true,
-                usuario: usuario
-            });
-        } catch (error) {
-            if (error instanceof Error) {
-                res.status(500).json({
-                    success: false,
-                    message: error.message
-                });
-            }
-        }
-    }
-
     async registrar(req: Request, res: Response) {
         // ✅ Asegurar conexión antes de registrar
         await ensureConnection();
@@ -140,50 +111,36 @@ class UsuariosController {
             }
         }
 
+    }// En usuariosController.ts del Auth Service
+async login(req: Request, res: Response) {
+    const { email, password } = req.body;
+    
+    // Busca el usuario en BD
+    const usuario = await Usuario.findOne({ where: { email } });
+    if (!usuario || !bcrypt.compareSync(password, usuario.password)) {
+        return res.status(401).json({ success: false, message: "Credenciales inválidas" });
     }
-
-    async login(req: Request, res: Response) {
-        // ✅ Asegurar conexión antes de consultar
-        await ensureConnection();
-        try {
-
-            const { email, password } = req.body;
-            const usuario = await Usuario.findOne({ where: { email } , select: ["id", "nombre", "email", "rol"]});
-
-
-            const usuarioExiste = await Usuario.findOne({ where: { email } });
-            if (!usuarioExiste) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Usuario no encontrado"
-                });
-            }
-
-            const passwordValido = await bcrypt.compare(password, usuarioExiste.password);
-            if (!passwordValido) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Contraseña incorrecta"
-                });
-            }
-
-            const token = generarToken(usuarioExiste.email);
-            res.status(200).json({
-                success: true,
-                message: "Login exitoso",
-                token,
-                usuariologeado: usuario
-            });
-
-        } catch (error) {
-            if (error instanceof Error) {
-                return res.status(500).json({ 
-                    success: false,
-                    message: "Error al procesar el login: " + error.message
-                });
-            }
+    
+    // Genera token CON id, nombre y rol
+    const token = generarToken({
+        id: usuario.id,
+        email: usuario.email,
+        nombre: usuario.nombre,
+        rol: usuario.rol
+    });
+    
+    return res.json({
+        success: true,
+        message: "Login exitoso",
+        token,
+        usuariologeado: {
+            id: usuario.id,
+            nombre: usuario.nombre,
+            email: usuario.email,
+            rol: usuario.rol
         }
-    }
+    });
+}
 
     async cambiarDatos(req: Request, res: Response) {
         // ✅ Asegurar conexión antes de actualizar
@@ -274,39 +231,6 @@ class UsuariosController {
             res.json({ success: true, message: "Contraseña actualizada correctamente" });
         } catch (error) {
             res.status(500).json({ success: false, message: "Error al cambiar la contraseña" });
-        }
-    }
-
-    async borrar(req: Request, res: Response) {
-        // ✅ Asegurar conexión antes de consultar
-        await ensureConnection();
-        
-        const { id } = req.params;
-        try {
-            const usuario = await Usuario.findOneBy({ id: Number(id) });
-            if (!usuario) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Usuario no encontrado"
-                });
-            }
-
-            usuario.estado = false; // Cambiar estado a inactivo en lugar de eliminar
-            await usuario.save();
-
-            res.status(200).json({
-                success: true,
-                message: "Usuario desactivado correctamente"
-            });
-
-
-        } catch (error) {
-            if (error instanceof Error) {
-                res.status(500).json({
-                    success: false,
-                    message: error.message
-                });
-            }
         }
     }
 

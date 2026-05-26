@@ -1,549 +1,74 @@
 openapi: 3.0.3
 info:
-  title: API Sistema de Asistencia QR - UGEL
-  version: 2.0.0
+  title: Authentication Service API
+  version: 1.0.0
   description: |
-    API REST para el Sistema de Control de Asistencia mediante código QR de la UGEL.
+    Microservicio de autenticación centralizado para gestionar usuarios y generación de tokens JWT.
     
-    Gestiona usuarios del sistema, personal docente/administrativo, cargos y registros
-    de asistencia (entrada/salida) mediante escaneo de código QR único por empleado.
+    Este servicio proporciona:
+    - Registro de nuevos usuarios
+    - Login y generación de tokens JWT
+    - Validación de tokens
+    - Gestión de datos del usuario (cambiar datos, cambiar contraseña)
     
-    **Autenticación:** Los endpoints protegidos requieren un token JWT en el header
-    `Authorization: Bearer <token>`. El token se obtiene en `POST /usuarios/login`.
+    **Autenticación:** Los endpoints protegidos requieren un token JWT en el header:
+    ```
+    Authorization: Bearer <token>
+    ```
+    
+    El token se obtiene mediante `POST /usuarios/login` y tiene validez de 24 horas.
+    
+  contact:
+    name: Equipo de Desarrollo
+    email: dev@example.com
+  license:
+    name: ISC
 
 servers:
-  - url: http://localhost:6500
+  - url: http://localhost:3000
     description: Servidor de desarrollo local
-  - url: https://be-asistencia-qrugel.vercel.app
+  - url: https://auth-service.vercel.app
     description: Servidor de producción (Vercel)
 
 tags:
+  - name: Autenticación
+    description: Endpoints de autenticación - Login y Registro
   - name: Usuarios
-    description: Gestión de usuarios del sistema y autenticación
-  - name: Personal
-    description: Gestión del personal (docentes / administrativos) y sus códigos QR
-  - name: Cargos
-    description: Catálogo de cargos o puestos laborales
-  - name: Distritos
-    description: Catálogo de distritos o zonas educativas
-  - name: Instituciones Educativas
-    description: Catálogo de instituciones educativas con niveles/modalidades
-  - name: Asistencia
-    description: Registro y consulta de asistencia mediante código QR
-  - name: Registros
-    description: "Gestión de registros de culminación de misiones (juego SSTMON)"
+    description: Gestión de perfil de usuario autenticado
+  - name: Administración
+    description: Endpoints de administración (requieren token)
 
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-  schemas:
-    # ── Usuarios ──────────────────────────────────────────────
-    Usuario:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        nombre:
-          type: string
-          example: "Juan Pérez"
-        email:
-          type: string
-          format: email
-          example: "juan@ugel.gob.pe"
-        rol:
-          type: string
-          example: "admin"
-        telefono:
-          type: string
-          example: "987654321"
-        estado:
-          type: boolean
-          example: true
-
-    # ── Cargos ────────────────────────────────────────────────
-    Cargo:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        cargo:
-          type: string
-          example: "Director"
-        descripcion:
-          type: string
-          example: "Director de la institución educativa"
-        estado:
-          type: boolean
-          example: true
-        createdat:
-          type: string
-          format: date-time
-        updatedat:
-          type: string
-          format: date-time
-
-    # ── Distritos ─────────────────────────────────────────────
-    Distrito:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        distrito:
-          type: string
-          example: "Grocio Prado"
-        alias:
-          type: string
-          example: "GP"
-        estado:
-          type: boolean
-          example: true
-        createdat:
-          type: string
-          format: date-time
-        updatedat:
-          type: string
-          format: date-time
-
-    # ── Instituciones Educativas ──────────────────────────────
-    InstitucionEducativa:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 2
-        codigoModular:
-          type: string
-          description: Código modular único de la institución educativa
-          example: "0281774"
-        nombreIE:
-          type: string
-          description: Nombre oficial de la institución educativa
-          example: "22226 NUESTRA SEÑORA DE FATIMA"
-        nivelModalidad:
-          type: string
-          enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
-          description: Nivel/modalidad educativa de la institución
-          example: "PRIMARIA"
-        distritoId:
-          type: integer
-          nullable: true
-          description: ID del distrito donde está ubicada la institución educativa
-          example: 1
-        distrito:
-          type: object
-          nullable: true
-          properties:
-            id:
-              type: integer
-            distrito:
-              type: string
-            alias:
-              type: string
-        estado:
-          type: boolean
-          example: true
-        createdat:
-          type: string
-          format: date-time
-        updatedat:
-          type: string
-          format: date-time
-
-    # ── Personal ──────────────────────────────────────────────
-    Personal:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 5
-        dni:
-          type: string
-          minLength: 8
-          maxLength: 8
-          example: "12345678"
-        nombres:
-          type: string
-          example: "María"
-        apellidos:
-          type: string
-          example: "García López"
-        cargoId:
-          type: integer
-          example: 2
-        cargo:
-          $ref: '#/components/schemas/Cargo'
-        distritoId:
-          type: integer
-          nullable: true
-          example: 1
-        distrito:
-          $ref: '#/components/schemas/Distrito'
-        nivelModalidad:
-          type: string
-          nullable: true
-          enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
-          description: Nivel/modalidad de la institución educativa (debe coincidir con la nivelModalidad de institucionEducativa)
-          example: "PRIMARIA"
-        institucionEducativaId:
-          type: integer
-          nullable: true
-          description: ID de la institución educativa. Si se proporciona, su nivelModalidad debe coincidir con el nivelModalidad del personal
-          example: 2
-        institucionEducativa:
-          type: object
-          nullable: true
-          properties:
-            id:
-              type: integer
-            codigoModular:
-              type: string
-            nombreIE:
-              type: string
-            nivelModalidad:
-              type: string
-        codigoQR:
-          type: string
-          description: Imagen QR codificada en base64 (data URI PNG) que contiene {id, dni, nombres, apellidos, cargoId, distritoId}
-          example: "data:image/png;base64,iVBORw0KGgoAAAANS..."
-        foto:
-          type: string
-          nullable: true
-          description: URL de la foto del personal en Cloudinary
-          example: "https://res.cloudinary.com/.../personal/foto.jpg"
-        estado:
-          type: boolean
-          example: true
-        createdat:
-          type: string
-          format: date-time
-        updatedat:
-          type: string
-          format: date-time
-
-    # ── Asistencia ────────────────────────────────────────────
-    Asistencia:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 10
-        personalId:
-          type: integer
-          example: 5
-        personal:
-          type: object
-          properties:
-            id:
-              type: integer
-            dni:
-              type: string
-            nombres:
-              type: string
-            apellidos:
-              type: string
-            nivelModalidad:
-              type: string
-              nullable: true
-              enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
-            cargo:
-              type: object
-              properties:
-                cargo:
-                  type: string
-            distrito:
-              type: object
-              nullable: true
-              properties:
-                id:
-                  type: integer
-                distrito:
-                  type: string
-                alias:
-                  type: string
-            institucionEducativa:
-              type: object
-              nullable: true
-              properties:
-                id:
-                  type: integer
-                codigoModular:
-                  type: string
-                nombreIE:
-                  type: string
-                nivelModalidad:
-                  type: string
-        fecha:
-          type: string
-          format: date
-          example: "2026-03-08"
-        horaEntrada:
-          type: string
-          format: time
-          nullable: true
-          example: "08:05:12"
-        horaSalida:
-          type: string
-          format: time
-          nullable: true
-          example: "17:00:45"
-        horasTrabajadas:
-          type: string
-          nullable: true
-          description: Tiempo trabajado en formato HH:MM
-          example: "08:55"
-        estado:
-          type: string
-          enum: [EN_CURSO, COMPLETO]
-          example: "COMPLETO"
-        usuarioIdEntrada:
-          type: integer
-          nullable: true
-          description: ID del usuario que registró la ENTRADA (auditoría)
-          example: 2
-        usuarioNombreEntrada:
-          type: string
-          nullable: true
-          description: Nombre del usuario que registró la ENTRADA (auditoría)
-          example: "Personal Sistema"
-        usuarioIdSalida:
-          type: integer
-          nullable: true
-          description: ID del usuario que registró la SALIDA (auditoría)
-          example: 1
-        usuarioNombreSalida:
-          type: string
-          nullable: true
-          description: Nombre del usuario que registró la SALIDA (auditoría)
-          example: "Admin UGEL"
-        createdat:
-          type: string
-          format: date-time
-
-    # ── Registros ──────────────────────────────────────────────
-    Registro:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        nombreCompleto:
-          type: string
-          description: Nombre completo del empleado que completó la misión
-          example: "Carlos Pérez"
-        dni:
-          type: string
-          description: DNI del empleado
-          example: "12345678"
-        cargo:
-          type: string
-          description: Cargo del empleado
-          example: "Supervisor"
-        missionId:
-          type: integer
-          description: ID de la misión (1=Trabajo en Altura, 2=Trabajos en Vía Pública, 3=Energías Peligrosas)
-          example: 1
-        missionName:
-          type: string
-          description: Nombre descriptivo de la misión
-          example: "TRABAJO EN ALTURA"
-        score:
-          type: integer
-          description: Número de respuestas correctas obtenidas
-          example: 9
-        total:
-          type: integer
-          description: Total de preguntas (normalmente 10)
-          example: 10
-        percentage:
-          type: integer
-          description: Porcentaje de respuestas correctas (0-100)
-          example: 90
-        approved:
-          type: boolean
-          description: Indicador si el empleado aprobó (score >= 8)
-          example: true
-        pokeball:
-          type: string
-          nullable: true
-          description: Color de la pokebola seleccionada (red, blue, yellow)
-          example: "red"
-        completedAt:
-          type: string
-          format: date-time
-          description: Fecha y hora en que se completó la misión
-          example: "2026-05-05T14:30:00Z"
-
-    # ── Respuestas genéricas ──────────────────────────────────
-    RespuestaExito:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-        message:
-          type: string
-
-    RespuestaError:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        message:
-          type: string
-          example: "Descripción del error"
-
-    RespuestaPaginada:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-        total:
-          type: integer
-          example: 50
-        pagina:
-          type: integer
-          example: 1
-        limite:
-          type: integer
-          example: 10
-
-# ══════════════════════════════════════════════════════════════
-# PATHS
-# ══════════════════════════════════════════════════════════════
 paths:
-
-  # ─────────────────────────────────────────────────────────────
-  # USUARIOS
-  # ─────────────────────────────────────────────────────────────
-  /usuarios:
-    post:
-      tags: [Usuarios]
-      summary: Registrar un nuevo usuario del sistema
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [nombre, email, telefono, password, rol]
-              properties:
-                nombre:
-                  type: string
-                  example: "Juan Pérez"
-                email:
-                  type: string
-                  format: email
-                  example: "juan@ugel.gob.pe"
-                telefono:
-                  type: string
-                  example: "987654321"
-                password:
-                  type: string
-                  format: password
-                  example: "contraseña123"
-                rol:
-                  type: string
-                  example: "admin"
-      responses:
-        '201':
-          description: Usuario creado exitosamente
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaExito'
-                  - type: object
-                    properties:
-                      message:
-                        example: "Usuario Juan Pérez con ID 1 creado exitosamente"
-        '400':
-          description: Faltan campos, email duplicado o nombre duplicado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    get:
-      tags: [Usuarios]
-      summary: Obtener lista de usuarios con paginación
-      parameters:
-        - in: query
-          name: estado
-          schema:
-            type: boolean
-          description: Filtrar por estado activo/inactivo
-          example: true
-        - in: query
-          name: pagina
-          schema:
-            type: integer
-            default: 1
-          description: Número de página
-        - in: query
-          name: limite
-          schema:
-            type: integer
-            default: 10
-          description: Cantidad de resultados por página
-      responses:
-        '200':
-          description: Lista de usuarios paginada
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaPaginada'
-                  - type: object
-                    properties:
-                      usuarios:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Usuario'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
   /usuarios/login:
     post:
-      tags: [Usuarios]
+      tags:
+        - Autenticación
       summary: Iniciar sesión y obtener token JWT
+      description: |
+        Autentica un usuario con email y contraseña.
+        Retorna un token JWT válido por 24 horas.
+      operationId: login
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [email, password]
               properties:
                 email:
                   type: string
                   format: email
-                  example: "juan@ugel.gob.pe"
+                  example: "usuario@example.com"
                 password:
                   type: string
                   format: password
-                  example: "contraseña123"
+                  example: "MiPassword123!"
+              required:
+                - email
+                - password
       responses:
         '200':
-          description: Login exitoso — retorna token JWT
+          description: Login exitoso
           content:
             application/json:
               schema:
@@ -557,27 +82,108 @@ paths:
                     example: "Login exitoso"
                   token:
                     type: string
-                    description: Token JWT para usar en endpoints protegidos
+                    description: Token JWT válido por 24 horas
                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                   usuariologeado:
-                    $ref: '#/components/schemas/Usuario'
+                    $ref: '#/components/schemas/UsuarioLogin'
         '400':
           description: Usuario no encontrado o contraseña incorrecta
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaError'
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Error interno del servidor
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaError'
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /usuarios/registrar:
+    post:
+      tags:
+        - Autenticación
+      summary: Registrar nuevo usuario
+      description: |
+        Crea una nueva cuenta de usuario en el sistema.
+        El email debe ser único.
+        La contraseña se encripta automáticamente con bcrypt.
+      operationId: registrar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  example: "Juan Pérez García"
+                email:
+                  type: string
+                  format: email
+                  example: "juan@example.com"
+                telefono:
+                  type: string
+                  example: "987654321"
+                password:
+                  type: string
+                  format: password
+                  minLength: 6
+                  example: "MiPassword123!"
+                rol:
+                  type: string
+                  enum: [usuario, admin]
+                  default: usuario
+                  example: "usuario"
+              required:
+                - nombre
+                - email
+                - telefono
+                - password
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  id:
+                    type: integer
+                    example: 1
+                  message:
+                    type: string
+                    example: "Usuario Juan Pérez García con ID 1 creado exitosamente"
+        '400':
+          description: |
+            Error de validación:
+            - Email ya registrado
+            - Nombre ya registrado
+            - Faltan campos obligatorios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /usuarios/datos:
     put:
-      tags: [Usuarios]
-      summary: Actualizar datos del usuario autenticado
+      tags:
+        - Usuarios
+      summary: Actualizar datos del perfil
+      description: |
+        Actualiza el nombre, email o teléfono del usuario autenticado.
+        Requiere token JWT válido.
+      operationId: cambiarDatos
       security:
         - bearerAuth: []
       requestBody:
@@ -589,38 +195,70 @@ paths:
               properties:
                 nombre:
                   type: string
-                  example: "Juan Carlos Pérez"
+                  example: "Juan Pérez González"
                 email:
                   type: string
                   format: email
-                  example: "juancarlos@ugel.gob.pe"
+                  example: "nuevo.email@example.com"
                 telefono:
                   type: string
-                  example: "912345678"
+                  example: "998765432"
       responses:
         '200':
-          description: Datos actualizados exitosamente
+          description: Datos actualizados correctamente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaExito'
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Datos actualizados correctamente"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Usuario'
+        '400':
+          description: |
+            Error de validación:
+            - Email ya está registrado por otro usuario
+            - Nombre ya está registrado por otro usuario
+            - Teléfono ya está registrado por otro usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: Token no válido o no proporcionado
+          description: Token no válido o ausente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaError'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Usuario no encontrado
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /usuarios/password:
     put:
-      tags: [Usuarios]
-      summary: Cambiar contraseña del usuario autenticado
+      tags:
+        - Usuarios
+      summary: Cambiar contraseña
+      description: |
+        Permite al usuario cambiar su contraseña.
+        Requiere token JWT válido y la contraseña actual.
+      operationId: cambiarPassword
       security:
         - bearerAuth: []
       requestBody:
@@ -629,488 +267,22 @@ paths:
           application/json:
             schema:
               type: object
-              required: [password]
               properties:
-                password:
+                passwordActual:
                   type: string
                   format: password
-                  example: "nuevaContraseña456"
+                  example: "MiPasswordAntiguo123!"
+                passwordNueva:
+                  type: string
+                  format: password
+                  minLength: 6
+                  example: "MiPasswordNuevo456!"
+              required:
+                - passwordActual
+                - passwordNueva
       responses:
         '200':
-          description: Contraseña actualizada exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaExito'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '404':
-          description: Usuario no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /usuarios/{id}:
-    get:
-      tags: [Usuarios]
-      summary: Obtener detalle de un usuario por ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del usuario
-          example: 1
-      responses:
-        '200':
-          description: Detalle del usuario
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  usuario:
-                    $ref: '#/components/schemas/Usuario'
-        '404':
-          description: Usuario no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    delete:
-      tags: [Usuarios]
-      summary: Eliminar un usuario por ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del usuario a eliminar
-          example: 1
-      responses:
-        '200':
-          description: Usuario eliminado exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaExito'
-        '404':
-          description: Usuario no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  # ─────────────────────────────────────────────────────────────
-  # CARGOS
-  # ─────────────────────────────────────────────────────────────
-  /cargos:
-    post:
-      tags: [Cargos]
-      summary: Registrar un nuevo cargo
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [cargo, descripcion]
-              properties:
-                cargo:
-                  type: string
-                  example: "Docente"
-                descripcion:
-                  type: string
-                  example: "Docente de educación primaria"
-      responses:
-        '201':
-          description: Cargo registrado exitosamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  data:
-                    type: string
-                    example: "Cargo 'Docente' registrado exitosamente con ID 3"
-        '400':
-          description: Faltan campos o el cargo ya existe
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    get:
-      tags: [Cargos]
-      summary: Obtener lista de cargos
-      parameters:
-        - in: query
-          name: estado
-          schema:
-            type: boolean
-          description: Filtrar por estado activo/inactivo
-          example: true
-      responses:
-        '200':
-          description: Lista de cargos
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  succes:
-                    type: boolean
-                    example: true
-                  cargos:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Cargo'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /cargos/{id}:
-    put:
-      tags: [Cargos]
-      summary: Actualizar un cargo por ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del cargo
-          example: 2
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                cargo:
-                  type: string
-                  example: "Docente Titular"
-                descripcion:
-                  type: string
-                  example: "Docente titular de educación secundaria"
-                estado:
-                  type: boolean
-                  example: true
-      responses:
-        '200':
-          description: Cargo actualizado exitosamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  cargo:
-                    $ref: '#/components/schemas/Cargo'
-        '400':
-          description: El nombre del cargo ya está en uso por otro registro
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '404':
-          description: Cargo no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    delete:
-      tags: [Cargos]
-      summary: Eliminar un cargo por ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del cargo a eliminar
-          example: 2
-      responses:
-        '200':
-          description: Cargo eliminado exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaExito'
-        '404':
-          description: Cargo no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  # ─────────────────────────────────────────────────────────────
-  # DISTRITOS
-  # ─────────────────────────────────────────────────────────────
-  /distritos:
-    post:
-      tags: [Distritos]
-      summary: Crear un nuevo distrito
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [distrito, alias]
-              properties:
-                distrito:
-                  type: string
-                  example: "Grocio Prado"
-                alias:
-                  type: string
-                  example: "GP"
-      responses:
-        '201':
-          description: Distrito creado exitosamente
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaExito'
-                  - type: object
-                    properties:
-                      distrito:
-                        $ref: '#/components/schemas/Distrito'
-        '400':
-          description: Faltan campos o distrito duplicado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    get:
-      tags: [Distritos]
-      summary: Obtener lista de distritos
-      parameters:
-        - in: query
-          name: estado
-          schema:
-            type: boolean
-          description: Filtrar por estado activo/inactivo
-          example: true
-      responses:
-        '200':
-          description: Lista de distritos
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  distritos:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Distrito'
-
-  /distritos/{id}:
-    put:
-      tags: [Distritos]
-      summary: Actualizar un distrito
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del distrito
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                distrito:
-                  type: string
-                  example: "Chincha Alta"
-                alias:
-                  type: string
-                  example: "CA"
-                estado:
-                  type: boolean
-                  example: true
-      responses:
-        '200':
-          description: Distrito actualizado correctamente
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaExito'
-                  - type: object
-                    properties:
-                      distrito:
-                        $ref: '#/components/schemas/Distrito'
-        '404':
-          description: Distrito no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    patch:
-      tags: [Distritos]
-      summary: Cambiar estado de un distrito
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del distrito
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [estado]
-              properties:
-                estado:
-                  type: boolean
-                  example: false
-      responses:
-        '200':
-          description: Estado del distrito cambiado correctamente
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaExito'
-                  - type: object
-                    properties:
-                      distrito:
-                        $ref: '#/components/schemas/Distrito'
-
-    delete:
-      tags: [Distritos]
-      summary: Desactivar un distrito
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del distrito
-      responses:
-        '200':
-          description: Distrito desactivado correctamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaExito'
-        '404':
-          description: Distrito no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  # ─────────────────────────────────────────────────────────────
-  # PERSONAL
-  # ─────────────────────────────────────────────────────────────
-  /personal:
-    post:
-      tags: [Personal]
-      summary: Registrar nuevo personal y generar su código QR
-      description: |
-        Crea un nuevo empleado en el sistema. Al registrarse, se genera
-        automáticamente un código QR único (base64 PNG) que contiene
-        `{ id, dni, nombres, apellidos, cargoId, distritoId }`.
-        
-        **Campos requeridos:** dni, nombres, apellidos, cargoId
-        
-        **Campos opcionales:** distritoId, nivelModalidad, institucionEducativaId
-        
-        **Validación cruzada:** Si proporciona tanto `nivelModalidad` como `institucionEducativaId`,
-        el `nivelModalidad` del personal DEBE coincidir con el `nivelModalidad` de la institución educativa.
-        
-        **Sobrescritura de distrito:** Si proporciona `institucionEducativaId`, el distrito del personal
-        será automáticamente sobrescrito por el distrito asociado a esa institución educativa (si existe).
-        Esto es útil para garantizar que el personal está asignado al correcto distrito según su institución.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [dni, nombres, apellidos, cargoId]
-              properties:
-                dni:
-                  type: string
-                  minLength: 8
-                  maxLength: 8
-                  example: "12345678"
-                nombres:
-                  type: string
-                  example: "María"
-                apellidos:
-                  type: string
-                  example: "García López"
-                cargoId:
-                  type: integer
-                  description: ID del cargo existente en la tabla cargos
-                  example: 2
-                distritoId:
-                  type: integer
-                  nullable: true
-                  description: (Opcional) ID del distrito existente en la tabla distritos
-                  example: 1
-                nivelModalidad:
-                  type: string
-                  nullable: true
-                  enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
-                  description: (Opcional) Nivel/modalidad. Si se proporciona institucionEducativaId, debe coincidir con su nivelModalidad
-                  example: "PRIMARIA"
-                institucionEducativaId:
-                  type: integer
-                  nullable: true
-                  description: (Opcional) ID de la institución educativa. Su nivelModalidad debe coincidir con el del personal
-                  example: 2
-      responses:
-        '201':
-          description: Personal registrado exitosamente con QR generado
+          description: Contraseña actualizada correctamente
           content:
             application/json:
               schema:
@@ -1121,88 +293,68 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: "Personal María García López con ID 5 creado exitosamente"
-                  personal:
-                    $ref: '#/components/schemas/Personal'
+                    example: "Contraseña actualizada correctamente"
         '400':
-          description: |
-            Validación fallida. Posibles errores:
-            - Faltan campos requeridos (dni, nombres, apellidos, cargoId)
-            - DNI duplicado
-            - DNI inválido (debe tener 8 dígitos)
-            - Cargo inexistente
-            - Distrito inexistente
-            - Institución educativa inexistente
-            - Mismatch: nivelModalidad no coincide con el de la institucionEducativa
+          description: Contraseña actual incorrecta
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaError'
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Token no válido o ausente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Error interno del servidor
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaError'
+                $ref: '#/components/schemas/ErrorResponse'
 
+  /usuarios:
     get:
-      tags: [Personal]
-      summary: Obtener lista de personal con paginación y relación de cargo
+      tags:
+        - Administración
+      summary: Listar todos los usuarios
+      description: |
+        Lista todos los usuarios del sistema con opciones de filtrado y paginación.
+        Requiere token JWT válido.
+      operationId: consultar
+      security:
+        - bearerAuth: []
       parameters:
-        - in: query
-          name: estado
+        - name: estado
+          in: query
+          description: Filtrar por estado (true/false)
           schema:
-            type: boolean
-          description: Filtrar por estado activo/inactivo
-          example: true
-        - in: query
-          name: pagina
+            type: string
+            enum: [true, false]
+          example: "true"
+        - name: pagina
+          in: query
+          description: Número de página (por defecto 1)
           schema:
             type: integer
             default: 1
-          description: Número de página
-        - in: query
-          name: limite
+          example: 1
+        - name: limite
+          in: query
+          description: Cantidad de registros por página (por defecto 10)
           schema:
             type: integer
             default: 10
-          description: Resultados por página
+          example: 10
       responses:
         '200':
-          description: Lista paginada de personal
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaPaginada'
-                  - type: object
-                    properties:
-                      personal:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Personal'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /personal/{id}:
-    get:
-      tags: [Personal]
-      summary: Obtener detalle de un empleado por ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del personal
-          example: 5
-      responses:
-        '200':
-          description: Detalle del personal con cargo completo
+          description: Lista de usuarios obtenida correctamente
           content:
             application/json:
               schema:
@@ -1211,993 +363,111 @@ paths:
                   success:
                     type: boolean
                     example: true
-                  personal:
-                    $ref: '#/components/schemas/Personal'
-        '404':
-          description: Personal no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    put:
-      tags: [Personal]
-      summary: Actualizar datos de un empleado
-      description: |
-        Actualiza los datos del personal. Si se cambia el `cargoId`, `distritoId`,
-        el DNI o algún dato relevante, el código QR se regenera automáticamente.
-        
-        **Validación cruzada:** Si proporciona tanto `nivelModalidad` como `institucionEducativaId`,
-        el `nivelModalidad` del personal DEBE coincidir con el `nivelModalidad` de la institución educativa.
-        
-        **Sobrescritura de distrito:** Si proporciona `institucionEducativaId`, el distrito del personal
-        será automáticamente sobrescrito por el distrito asociado a esa institución educativa (si existe).
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del personal
-          example: 5
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                dni:
-                  type: string
-                  example: "87654321"
-                nombres:
-                  type: string
-                  example: "María Elena"
-                apellidos:
-                  type: string
-                  example: "García Ruiz"
-                cargoId:
-                  type: integer
-                  example: 3
-                distritoId:
-                  type: integer
-                  nullable: true
-                  example: 2
-                nivelModalidad:
-                  type: string
-                  nullable: true
-                  enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
-                  description: Nivel/modalidad. Si se proporciona institucionEducativaId, debe coincidir con su nivelModalidad
-                  example: "PRIMARIA"
-                institucionEducativaId:
-                  type: integer
-                  nullable: true
-                  description: ID de la institución educativa. Su nivelModalidad debe coincidir con el del personal
-                  example: 2
-      responses:
-        '200':
-          description: Personal actualizado (QR regenerado si aplica)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                  personal:
-                    $ref: '#/components/schemas/Personal'
-        '400':
-          description: |
-            Validación fallida. Posibles errores:
-            - DNI duplicado (en otro registro)
-            - DNI inválido (debe tener 8 dígitos)
-            - Cargo inexistente
-            - Distrito inexistente
-            - Institución educativa inexistente
-            - Mismatch: nivelModalidad no coincide con el de la institucionEducativa
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '404':
-          description: Personal no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    delete:
-      tags: [Personal]
-      summary: Eliminar un empleado por ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del personal a eliminar
-          example: 5
-      responses:
-        '200':
-          description: Personal eliminado exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaExito'
-        '404':
-          description: Personal no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /personal/{id}/estado:
-    put:
-      tags: [Personal]
-      summary: Cambiar estado activo/inactivo de un empleado
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del personal
-          example: 5
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [estado]
-              properties:
-                estado:
-                  type: boolean
-                  example: false
-      responses:
-        '200':
-          description: Estado actualizado correctamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaExito'
-        '404':
-          description: Personal no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /personal/{id}/foto:
-    post:
-      tags: [Personal]
-      summary: Subir o actualizar la foto de un empleado
-      description: |
-        Sube una imagen al servicio Cloudinary (carpeta `personal`) y
-        guarda la URL resultante en el campo `foto` del empleado.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del personal
-          example: 5
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required: [foto]
-              properties:
-                foto:
-                  type: string
-                  format: binary
-                  description: Archivo de imagen (JPG, PNG, WEBP, etc.)
-      responses:
-        '200':
-          description: Foto subida y URL guardada exitosamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Foto actualizada exitosamente"
-                  foto:
-                    type: string
-                    example: "https://res.cloudinary.com/.../personal/abc123.jpg"
-        '400':
-          description: No se proporcionó ninguna imagen
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '404':
-          description: Personal no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /personal/importar-csv:
-    post:
-      tags: [Personal]
-      summary: Importar múltiples personal desde archivo CSV
-      description: |
-        Carga masivamente personal desde un archivo CSV. Genera automáticamente
-        códigos QR para cada registro exitoso.
-        
-        **Formato CSV esperado:**
-        ```
-        dni,nombres,apellidos,cargoId,distritoId,nivelModalidad,institucionEducativaId,estado
-        12345678,Juan,Pérez,1,1,PRIMARIA,5,true
-        87654321,María,García,2,2,SECUNDARIA,10,true
-        ```
-        
-        **Campos obligatorios:** dni, nombres, apellidos, cargoId
-        
-        **Campos opcionales:** distritoId, nivelModalidad, institucionEducativaId, estado
-        
-        **Validaciones por cada fila:**
-        - DNI debe tener 8 dígitos y ser único
-        - cargoId debe existir en tabla `cargos`
-        - distritoId debe existir en tabla `distritos` (si se proporciona)
-        - nivelModalidad debe ser una de: INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO
-        - institucionEducativaId debe existir en tabla `institucionesEducativas` (si se proporciona)
-        - Si se proporciona institucionEducativaId, el nivelModalidad debe coincidir
-        
-        **Respuesta:** La respuesta incluye un resumen con total de registros,
-        éxitos, errores y detalles de cada fila procesada.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required: [csv]
-              properties:
-                csv:
-                  type: string
-                  format: binary
-                  description: Archivo CSV con personales a importar
-      responses:
-        '200':
-          description: Importación completada con resumen de resultados
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Importación completada: 45 exitosos, 3 errores"
-                  resumen:
-                    type: object
-                    properties:
-                      total:
-                        type: integer
-                        example: 48
-                      exitosos:
-                        type: integer
-                        example: 45
-                      errores:
-                        type: integer
-                        example: 3
-                  detalles:
+                  usuarios:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        fila:
-                          type: integer
-                          description: Número de fila en el CSV (comenzando desde 2)
-                          example: 2
-                        dni:
-                          type: string
-                          example: "12345678"
-                        estado:
-                          type: string
-                          example: "Insertado exitosamente"
-                        id:
-                          type: integer
-                          description: ID del personal creado (solo si fue exitoso)
-                          example: 123
-                        error:
-                          type: string
-                          description: Mensaje de error (solo si hubo error)
-                          example: "El DNI ya está registrado"
-        '400':
-          description: Archivo CSV inválido o vacío
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
+                      $ref: '#/components/schemas/Usuario'
+                  total:
+                    type: integer
+                    example: 25
+                  pagina:
+                    type: integer
+                    example: 1
+                  limite:
+                    type: integer
+                    example: 10
         '401':
-          description: Token no válido o no proporcionado
+          description: Token no válido o ausente
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaError'
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Error interno del servidor
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RespuestaError'
+                $ref: '#/components/schemas/ErrorResponse'
 
-  # ─────────────────────────────────────────────────────────────
-  # ASISTENCIA
-  # ─────────────────────────────────────────────────────────────
-  /asistencia/registrar:
-    post:
-      tags: [Asistencia]
-      summary: "REQ-F-006 + REQ-F-014 + REQ-F-015: Validar QR y registrar entrada/salida"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
       description: |
-        Recibe directamente el contenido del QR escaneado. Internamente:
-        1. **Valida el QR** (REQ-F-014): verifica formato, busca al empleado por `id` y `dni`, y comprueba que esté activo.
-        2. **Detecta automáticamente** ENTRADA o SALIDA (REQ-F-015):
+        Token JWT obtenido mediante POST /usuarios/login.
+        Incluir en el header: Authorization: Bearer <token>
 
-        | Situación al momento del escaneo | Acción |
-        |---|---|
-        | Sin registros hoy | Crea nueva ENTRADA (`estado: EN_CURSO`) |
-        | Tiene ENTRADA sin SALIDA | Registra SALIDA, calcula `horasTrabajadas` (`estado: COMPLETO`) |
-        | Registro del día completo | Crea nueva ENTRADA (horario extendido) |
-
-        `horasTrabajadas` se calcula como la diferencia entre `horaEntrada` y `horaSalida` en formato **HH:MM**.
-        
-        **Auditoría:** El usuario autenticado que realiza el registro (entrada/salida) será guardado en los campos
-        `usuarioId` y `usuarioNombre` para crear un rastro de quién registró la asistencia.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [qrData]
-              properties:
-                qrData:
-                  type: string
-                  description: Contenido del código QR escaneado (JSON string)
-                  example: '{"id":5,"dni":"12345678","nombres":"María","apellidos":"García López","cargoId":2}'
-      responses:
-        '200':
-          description: Entrada o salida registrada exitosamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  tipo:
-                    type: string
-                    enum: [ENTRADA, SALIDA]
-                    example: "ENTRADA"
-                  message:
-                    type: string
-                    example: "Entrada registrada exitosamente"
-                  asistencia:
-                    $ref: '#/components/schemas/Asistencia'
-        '400':
-          description: No se proporcionó el ID del personal
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /asistencia/hoy/{personalId}:
-    get:
-      tags: [Asistencia]
-      summary: Obtener registros de asistencia del día actual de un empleado
-      description: |
-        Retorna todos los registros de asistencia del día corriente
-        para el personal indicado, junto con el total de horas trabajadas
-        acumuladas en el día.
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: personalId
-          required: true
-          schema:
-            type: integer
-          description: ID del personal
-          example: 5
-      responses:
-        '200':
-          description: Registros del día y total de horas trabajadas
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  fecha:
-                    type: string
-                    format: date
-                    example: "2026-03-08"
-                  registros:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Asistencia'
-                  totalHoras:
-                    type: string
-                    description: Suma de horas trabajadas en el día en formato HH:MM
-                    example: "08:55"
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /asistencia/reporte:
-    get:
-      tags: [Asistencia]
-      summary: "REQ-F-007: Reporte de asistencias con filtros y paginación"
-      description: |
-        Genera un reporte detallado de asistencias. Permite filtrar por:
-        - Rango de fechas (`fechaInicio` y/o `fechaFin`)
-        - Personal específico (`personalId`)
-        - Paginación (`pagina`, `limite`)
-        
-        Los resultados incluyen datos completos del personal (cargo, distrito, nivel/modalidad,
-        institución educativa si aplica). Ordenados por fecha descendente.
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: query
-          name: fechaInicio
-          schema:
-            type: string
-            format: date
-          description: Fecha de inicio del rango (YYYY-MM-DD)
-          example: "2026-03-01"
-        - in: query
-          name: fechaFin
-          schema:
-            type: string
-            format: date
-          description: Fecha de fin del rango (YYYY-MM-DD)
-          example: "2026-03-31"
-        - in: query
-          name: personalId
-          schema:
-            type: integer
-          description: Filtrar por un empleado específico (opcional)
-          example: 5
-        - in: query
-          name: pagina
-          schema:
-            type: integer
-            default: 1
-          description: Número de página
-        - in: query
-          name: limite
-          schema:
-            type: integer
-            default: 10
-          description: Resultados por página
-      responses:
-        '200':
-          description: Reporte de asistencias paginado
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaPaginada'
-                  - type: object
-                    properties:
-                      asistencias:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Asistencia'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  # ─────────────────────────────────────────────────────────────
-  # INSTITUCIONES EDUCATIVAS
-  # ─────────────────────────────────────────────────────────────
-  /institucionesEducativas:
-    post:
-      tags: [Instituciones Educativas]
-      summary: Crear una nueva institución educativa
-      description: |
-        Registra una nueva institución educativa en el sistema.
-        El `codigoModular` debe ser único.
-        
-        **Campos requeridos:** codigoModular, nombreIE, nivelModalidad, distritoId
-        
-        Cuando se asigna un `distritoId` a una institución educativa,
-        todos los personal que usen esta institución heredarán automáticamente
-        su distrito (sobrescribiendo cualquier distrito seleccionado previamente).
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [codigoModular, nombreIE, nivelModalidad, distritoId]
-              properties:
-                codigoModular:
-                  type: string
-                  description: Código modular único de la institución
-                  example: "0281774"
-                nombreIE:
-                  type: string
-                  description: Nombre oficial de la institución educativa
-                  example: "22226 NUESTRA SEÑORA DE FATIMA"
-                nivelModalidad:
-                  type: string
-                  enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
-                  description: Nivel/modalidad educativa
-                  example: "PRIMARIA"
-                distritoId:
-                  type: integer
-                  description: ID del distrito donde está ubicada la institución. El personal heredará automáticamente este distrito
-                  example: 1
-      responses:
-        '201':
-          description: Institución educativa creada exitosamente
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaExito'
-                  - type: object
-                    properties:
-                      institucionEducativa:
-                        $ref: '#/components/schemas/InstitucionEducativa'
-        '400':
-          description: |
-            Validación fallida. Posibles errores:
-            - Faltan campos requeridos (codigoModular, nombreIE, nivelModalidad, distritoId)
-            - Código modular duplicado
-            - Nivel/modalidad inválido
-            - Distrito inexistente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    get:
-      tags: [Instituciones Educativas]
-      summary: Obtener lista de instituciones educativas
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: query
-          name: estado
-          schema:
-            type: boolean
-          description: Filtrar por estado activo/inactivo
-          example: true
-        - in: query
-          name: nivelModalidad
-          schema:
-            type: string
-            enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
-          description: Filtrar por nivel/modalidad
-          example: "PRIMARIA"
-      responses:
-        '200':
-          description: Lista de instituciones educativas
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  institucionesEducativas:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/InstitucionEducativa'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /institucionesEducativas/{id}:
-    put:
-      tags: [Instituciones Educativas]
-      summary: Actualizar una institución educativa
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID de la institución educativa
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                codigoModular:
-                  type: string
-                  example: "0281775"
-                nombreIE:
-                  type: string
-                  example: "22227 SAN JOSÉ"
-                nivelModalidad:
-                  type: string
-                  enum: [INICIAL-JARDIN, PRIMARIA, SECUNDARIA, EBA-CEPTPRO]
-                  example: "SECUNDARIA"
-                distritoId:
-                  type: integer
-                  nullable: true
-                  description: ID del distrito donde está ubicada la institución. El personal heredará este distrito automáticamente
-                  example: 2
-                estado:
-                  type: boolean
-                  example: true
-      responses:
-        '200':
-          description: Institución educativa actualizada correctamente
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaExito'
-                  - type: object
-                    properties:
-                      institucionEducativa:
-                        $ref: '#/components/schemas/InstitucionEducativa'
-        '400':
-          description: Código modular duplicado o nivelModalidad inválida
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '404':
-          description: Institución educativa no encontrada
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    patch:
-      tags: [Instituciones Educativas]
-      summary: Cambiar estado de una institución educativa
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID de la institución educativa
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [estado]
-              properties:
-                estado:
-                  type: boolean
-                  example: false
-      responses:
-        '200':
-          description: Estado de la institución educativa cambiado correctamente
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaExito'
-                  - type: object
-                    properties:
-                      institucionEducativa:
-                        $ref: '#/components/schemas/InstitucionEducativa'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '404':
-          description: Institución educativa no encontrada
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    delete:
-      tags: [Instituciones Educativas]
-      summary: Desactivar una institución educativa
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID de la institución educativa
-      responses:
-        '200':
-          description: Institución educativa desactivada correctamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaExito'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '404':
-          description: Institución educativa no encontrada
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  # ─────────────────────────────────────────────────────────────
-  # REGISTROS
-  # ─────────────────────────────────────────────────────────────
-  /registros:
-    post:
-      tags: [Registros]
-      summary: Crear un registro de culminación de misión
-      description: |
-        Registra la culminación de una misión por parte de un empleado.
-        Este endpoint es llamado por el frontend después de que el empleado
-        completa el juego y obtiene su puntaje.
-
-        **Campos requeridos:** nombreCompleto, dni, cargo, missionId, score, total
-
-        **Campos opcionales:** missionName, percentage, approved, pokeball
-
-        El campo `percentage` se calcula automáticamente si no se proporciona.
-        El campo `approved` se determina por si score >= 8.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [nombreCompleto, dni, cargo, missionId, score, total]
-              properties:
-                nombreCompleto:
-                  type: string
-                  description: Nombre completo del empleado
-                  example: "Carlos Pérez"
-                dni:
-                  type: string
-                  description: DNI del empleado (8 dígitos)
-                  example: "12345678"
-                cargo:
-                  type: string
-                  description: Cargo del empleado
-                  example: "Supervisor"
-                missionId:
-                  type: integer
-                  description: ID de la misión completada (1, 2 o 3)
-                  example: 1
-                missionName:
-                  type: string
-                  description: (Opcional) Nombre de la misión
-                  example: "TRABAJO EN ALTURA"
-                score:
-                  type: integer
-                  description: Número de preguntas respondidas correctamente
-                  example: 9
-                total:
-                  type: integer
-                  description: Total de preguntas (normalmente 10)
-                  example: 10
-                percentage:
-                  type: integer
-                  description: (Opcional) Porcentaje de aciertos
-                  example: 90
-                approved:
-                  type: boolean
-                  description: (Opcional) Si fue aprobado (score >= 8)
-                  example: true
-                pokeball:
-                  type: string
-                  description: (Opcional) Color de la pokebola seleccionada
-                  enum: [red, blue, yellow]
-                  example: "red"
-      responses:
-        '201':
-          description: Registro creado exitosamente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  registro:
-                    $ref: '#/components/schemas/Registro'
-        '400':
-          description: Faltan campos obligatorios
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-    get:
-      tags: [Registros]
-      summary: Obtener lista de registros (solo administradores)
-      description: |
-        Lista todos los registros de empleados que completaron misiones.
-        Soporta paginación y filtrado por estado de aprobación.
-        **Requiere autenticación y rol de administrador.**
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: query
-          name: pagina
-          schema:
-            type: integer
-            default: 1
-          description: Número de página
-        - in: query
-          name: limite
-          schema:
-            type: integer
-            default: 20
-          description: Resultados por página
-        - in: query
-          name: approved
-          schema:
-            type: boolean
-          description: Filtrar por estado de aprobación (true/false)
-          example: true
-      responses:
-        '200':
-          description: Lista paginada de registros
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/RespuestaPaginada'
-                  - type: object
-                    properties:
-                      items:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Registro'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-
-  /registros/{id}:
-    get:
-      tags: [Registros]
-      summary: Obtener detalle de un registro
-      description: |
-        Obtiene los detalles completos de un registro específico por su ID.
-        **Requiere autenticación y rol de administrador.**
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID del registro
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
           example: 1
-      responses:
-        '200':
-          description: Detalle del registro
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  registro:
-                    $ref: '#/components/schemas/Registro'
-        '401':
-          description: Token no válido o no proporcionado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '404':
-          description: Registro no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RespuestaError'
+        nombre:
+          type: string
+          example: "Juan Pérez García"
+        email:
+          type: string
+          format: email
+          example: "juan@example.com"
+        telefono:
+          type: string
+          example: "987654321"
+        rol:
+          type: string
+          enum: [usuario, admin]
+          example: "usuario"
+        estado:
+          type: boolean
+          example: true
+        createdat:
+          type: string
+          format: date-time
+          example: "2026-05-26T10:30:00Z"
+        updatedat:
+          type: string
+          format: date-time
+          example: "2026-05-26T10:30:00Z"
+
+    UsuarioLogin:
+      type: object
+      description: Información del usuario retornada en el login
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: "Juan Pérez García"
+        email:
+          type: string
+          format: email
+          example: "juan@example.com"
+        rol:
+          type: string
+          enum: [usuario, admin]
+          example: "usuario"
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Descripción del error"
+
+security:
+  - bearerAuth: []
+
+x-readme:
+  explorer-enabled: true
+  samples-enabled: true
+  samples-languages:
+    - curl
+    - javascript
+    - python

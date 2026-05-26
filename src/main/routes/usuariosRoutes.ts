@@ -4,14 +4,13 @@ import { verificarToken } from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
-router.post('/', verificarToken, usuariosController.registrar);
+// Endpoints públicos
 router.post('/login', usuariosController.login);
+router.post('/registrar', usuariosController.registrar);
+
+// Endpoints protegidos (requieren token)
 router.put('/datos', verificarToken, usuariosController.cambiarDatos);
 router.put('/password', verificarToken, usuariosController.cambiarPassword);
 router.get('/', verificarToken, usuariosController.consultar);
-
-router.route("/:id")
-    .get(verificarToken, usuariosController.consultarDetalle)
-    .delete(verificarToken, usuariosController.borrar)
 
 export default router;

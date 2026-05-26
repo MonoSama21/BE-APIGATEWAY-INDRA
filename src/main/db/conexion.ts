@@ -1,7 +1,6 @@
 //import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
 import { Usuario } from '../models/usuariosModel';
-import { Registro } from '../models/registrosModel';
 
 
 // Selecciona el schema según el ambiente
@@ -12,7 +11,7 @@ export const AppDataSource = new DataSource({
     type: 'postgres',
     url: process.env.SUPABASE_URL || '',
     schema: SCHEMA,
-    entities: [Usuario, Registro],
+    entities: [Usuario],
     logging: true,
     synchronize: true
 });
