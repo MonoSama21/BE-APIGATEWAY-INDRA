@@ -12,6 +12,6 @@ export const AppDataSource = new DataSource({
     schema: SCHEMA,
     entities: [Usuario],
     logging: true,
-    synchronize: true
+    synchronize: false
 });
 
