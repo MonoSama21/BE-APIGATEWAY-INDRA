@@ -2,11 +2,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import usuariosRoutes from './routes/usuariosRoutes';
-import personalRoutes from './routes/personalRoutes';
-import cargosRoutes from './routes/cargosRoutes';
-import distritosRoutes from './routes/distritosRoutes';
-import institucionesEducativasRoutes from './routes/institucionesEducativasRoutes';
-import asistenciaRoutes from './routes/asistenciaRoutes';
 import registrosRoutes from './routes/registrosRoutes';
 
 const app = express();
@@ -37,11 +32,6 @@ app.get("/", (req: Request, res: Response) => {
 
 
 app.use('/usuarios', usuariosRoutes);
-app.use('/personal', personalRoutes);
-app.use('/cargos', cargosRoutes);
-app.use('/distritos', distritosRoutes);
-app.use('/institucioneseducativas', institucionesEducativasRoutes);
-app.use('/asistencia', asistenciaRoutes);
 app.use('/registros', registrosRoutes);
 
 export default app;
