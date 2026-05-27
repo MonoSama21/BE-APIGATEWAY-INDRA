@@ -113,6 +113,9 @@ class UsuariosController {
 
     }// En usuariosController.ts del Auth Service
 async login(req: Request, res: Response) {
+    // ✅ Asegurar conexión antes de registrar
+    await ensureConnection();
+    
     const { email, password } = req.body;
     
     // Busca el usuario en BD
