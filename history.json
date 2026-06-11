@@ -1,11 +1,11 @@
 [
   {
-    "id": "27290518491",
-    "runNumber": 16,
+    "id": "27362971469",
+    "runNumber": 17,
     "tag": "@dailyTests",
     "ambiente": "QA",
-    "date": "2026-06-10T16:31:46Z",
-    "dateFormatted": "10/06/2026 11:31",
+    "date": "2026-06-11T16:48:34Z",
+    "dateFormatted": "11/06/2026 11:48",
     "total": 0,
     "passed": 0,
     "failed": 0,
@@ -15,7 +15,7 @@
     "commit": "d0b9e2ed07d1106e6bf64b30a07e69bb51ac7a00",
     "commitShort": "d0b9e2e",
     "actor": "MonoSama21",
-    "reportUrl": "https://MonoSama21.github.io/BE-APIGATEWAY-INDRA/reports/16/karate-summary.html",
-    "actionsUrl": "https://github.com/MonoSama21/BE-APIGATEWAY-INDRA/actions/runs/27290518491"
+    "reportUrl": "https://MonoSama21.github.io/BE-APIGATEWAY-INDRA/reports/17/karate-summary.html",
+    "actionsUrl": "https://github.com/MonoSama21/BE-APIGATEWAY-INDRA/actions/runs/27362971469"
   }
 ]
